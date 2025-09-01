@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
     '  padding: 28px 48px;',
     '  border-radius: 12px;',
     '  background: rgba(12,6,30,0.6);',
-    '  box-shadow: 0 8px 30px rgba(0,0,0,0.6);',
+    '  box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 15px rgba(155,107,255,0.35);', // subtle glow
     '  border: 1px solid rgba(255,255,255,0.03);',
     '  min-width: 320px;',
     '  max-width: 92vw;',
@@ -87,7 +87,7 @@ app.get('/', (req, res) => {
     '  font-size: 2.6rem;',
     '  letter-spacing: 6px;',
     '  font-weight: 700;',
-    '  color: #dfe8ff;', // fixed: no extra quote
+    '  color: #dfe8ff;',
     '}',
     '.time {',
     '  margin-top: 0.6rem;',
