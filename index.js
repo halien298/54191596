@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Current Key</title>
+<title>Idiot´s Playground</title>
 
 <!-- Favicon / Web Icon -->
 <link rel="icon" type="image/png" href="https://i.pinimg.com/1200x/8b/b8/87/8bb887efbcf379cff28271ea480e705f.jpg">
