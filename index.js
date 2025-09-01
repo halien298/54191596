@@ -78,6 +78,7 @@ body {
   animation: glowAnim 2s infinite alternate;
   min-width: 320px;
   max-width: 92vw;
+  z-index: 5;
 }
 @keyframes glowAnim {
   0% { box-shadow: 0 0 12px #00f0ff, 0 0 25px #0088ff; }
@@ -108,7 +109,6 @@ body {
 .discord-btn { position: fixed; top:16px; left:16px; width:50px; height:50px; background: linear-gradient(135deg, #7289da, #99aaff); border-radius: 12px; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:0.3s all; box-shadow: 0 0 12px #7289da, 0 0 25px #99aaff; z-index:15; }
 .discord-btn:hover { transform: scale(1.1); box-shadow:0 0 20px #99aaff,0 0 35px #7289da; }
 .discord-btn img { width:28px; height:28px; }
-
 </style>
 </head>
 <body>
@@ -129,24 +129,33 @@ body {
   <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
 </div>
 
-<audio id="music" autoplay loop>
-  <source src="https://www.youtube.com/watch?v=uPhUOMKa5cM" type="audio/mp3">
-  Your browser does not support the audio element.
-</audio>
+<!-- Hidden YouTube player -->
+<div id="player" style="display:none;"></div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const music = document.getElementById("music");
-function togglePlay() {
-  if(music.paused) music.play();
-  else music.pause();
+let player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '0', width: '0',
+    videoId: 'uPhUOMKa5cM', // first video
+    playerVars: { autoplay: 1, loop: 1, playlist:'uPhUOMKa5cM', controls:0, modestbranding:1 },
+    events: { 'onReady': (e)=>{ e.target.playVideo(); } }
+  });
 }
-function setVolume(val) { music.volume = val / 100; }
+function togglePlay() {
+  if(player && player.getPlayerState){
+    const state = player.getPlayerState();
+    if(state === 1) player.pauseVideo();
+    else player.playVideo();
+  }
+}
+function setVolume(val){ if(player) player.setVolume(val); }
 
 // Update time
 function updateTime() {
   const now = new Date();
-  const timeStr = now.toLocaleTimeString();
-  document.getElementById("currentTime").innerText = "Name: Kryth C. | Time: " + timeStr;
+  document.getElementById("currentTime").innerText = "Name: Kryth C. | Time: " + now.toLocaleTimeString();
 }
 setInterval(updateTime, 1000);
 
