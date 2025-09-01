@@ -64,6 +64,7 @@ body {
   margin: 0;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: #05050a;
@@ -79,7 +80,6 @@ body {
   padding: 28px 48px;
   border-radius: 12px;
   background: rgba(12,6,30,0.6);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
   border: 1px solid rgba(255,255,255,0.03);
   min-width: 320px;
   max-width: 92vw;
@@ -143,6 +143,14 @@ body {
   0% { transform: translateY(-10vh); }
   100% { transform: translateY(120vh); }
 }
+
+.controls {
+  margin-top: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
 </style>
 </head>
 <body>
@@ -152,7 +160,41 @@ body {
   <div class="time">Generated at: ${new Date().toISOString()}</div>
   <div class="note">Key for Kryth C.</div>
 </div>
+
+<div class="controls">
+  <button onclick="togglePlay()">Play / Pause</button>
+  <input type="range" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+</div>
+
+<!-- YouTube iframe for music -->
+<iframe id="ytPlayer" width="0" height="0"
+  src="https://www.youtube.com/embed/Bah5yfKPDB4?enablejsapi=1&autoplay=1&loop=1&playlist=Bah5yfKPDB4"
+  frameborder="0" allow="autoplay; encrypted-media"></iframe>
+
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
+let player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('ytPlayer', {
+    events: {
+      'onReady': onPlayerReady
+    }
+  });
+}
+function onPlayerReady(event) {
+  player.setVolume(50);
+  player.playVideo();
+}
+function togglePlay() {
+  const state = player.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) player.pauseVideo();
+  else player.playVideo();
+}
+function setVolume(value) {
+  player.setVolume(value);
+}
+
+// Snow animation
 const snowRoot = document.getElementById("snow");
 for(let i=0;i<70;i++){
   const f = document.createElement("div");
