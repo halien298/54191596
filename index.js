@@ -4,8 +4,8 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KEY_LENGTH = 20;
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const KEY_LENGTH = 30;
+const CHARS = 'qwerztzuioQWRZUOPASDLKHFGYXCDVNMpasdf$@ghjklycvbnm1.9123456789+';
 
 let currentKey = generateKey(KEY_LENGTH);
 console.log(`[${new Date().toISOString()}] Initial key: ${currentKey}`);
