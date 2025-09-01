@@ -95,10 +95,8 @@ body {
 .flake { position: absolute; top: -10vh; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(122,162,255,0.98), rgba(155,107,255,0.92)); opacity: 0.85; filter: blur(0.2px); animation-name: fall; animation-timing-function: linear; animation-iteration-count: infinite; width: 8px; height: 8px; }
 @keyframes fall { 0% { transform: translateY(-10vh); } 100% { transform: translateY(120vh); } }
 
-/* Play button under key */
-.controls { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center; z-index: 10; }
-.btn { padding: 10px 22px; border: none; border-radius: 12px; background: linear-gradient(135deg, #d400ff, #aa00ff); color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s all; box-shadow: 0 0 10px rgba(255,0,255,0.6); }
-.btn:hover { box-shadow: 0 0 20px #ff00ff; transform: scale(1.05); }
+/* Volume slider below key box */
+.controls { margin-top: 20px; display: flex; justify-content: center; z-index: 10; }
 .slider { -webkit-appearance: none; width: 120px; height: 8px; background: linear-gradient(135deg, #d400ff, #aa00ff); border-radius: 8px; outline: none; cursor: pointer; transition: 0.2s; }
 .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #aa00ff; cursor: pointer; transition: 0.2s;}
 .slider::-webkit-slider-thumb:hover { background: #d400ff; border-color: #ff00ff; }
@@ -123,7 +121,6 @@ body {
   <div class="time" id="currentTime">Name: Kryth C. | Time: --:--:--</div>
   <div class="note">Refresh page if key is wrong.</div>
   <div class="controls">
-    <button class="btn" onclick="togglePlay()">Play / Pause</button>
     <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
   </div>
 </div>
@@ -141,7 +138,7 @@ function onYouTubeIframeAPIReady() {
     height: '0',
     width: '0',
     videoId: 'uPhUOMKa5cM',
-    playerVars: { autoplay: 0, loop: 1, playlist:'uPhUOMKa5cM', controls:0, modestbranding:1 },
+    playerVars: { autoplay: 1, loop: 1, playlist:'uPhUOMKa5cM', controls:0, modestbranding:1 },
     events: { 'onReady': onPlayerReady }
   });
 }
@@ -149,13 +146,7 @@ function onYouTubeIframeAPIReady() {
 function onPlayerReady(event) {
   isPlayerReady = true;
   event.target.setVolume(document.getElementById('volumeSlider').value);
-}
-
-function togglePlay() {
-  if(!isPlayerReady) return;
-  const state = player.getPlayerState();
-  if(state === YT.PlayerState.PLAYING) player.pauseVideo();
-  else player.playVideo();
+  event.target.playVideo(); // autoplay on page start
 }
 
 function setVolume(val){ if(isPlayerReady) player.setVolume(val); }
@@ -166,6 +157,7 @@ function updateTime() {
 }
 setInterval(updateTime, 1000);
 
+// Snow animation
 const snowRoot = document.getElementById("snow");
 for(let i=0;i<70;i++){
   const f = document.createElement("div");
