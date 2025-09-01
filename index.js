@@ -144,12 +144,73 @@ body {
   100% { transform: translateY(120vh); }
 }
 
+/* Controls */
 .controls {
   margin-top: 20px;
   z-index: 10;
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff69b4, #d67fff);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s all;
+  box-shadow: 0 0 10px rgba(214,127,255,0.6), 0 0 20px rgba(255,105,180,0.6);
+}
+
+.btn:hover {
+  box-shadow: 0 0 20px #ff85d0, 0 0 35px #bb33ff;
+  transform: scale(1.05);
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 120px;
+  height: 8px;
+  background: linear-gradient(135deg, #ff69b4, #d67fff);
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #d67fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: #ff69b4;
+  border-color: #ff85d0;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #d67fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #ff69b4;
+  border-color: #ff85d0;
 }
 </style>
 </head>
@@ -162,11 +223,10 @@ body {
 </div>
 
 <div class="controls">
-  <button onclick="togglePlay()">Play / Pause</button>
-  <input type="range" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+  <button class="btn" onclick="togglePlay()">Play / Pause</button>
+  <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
 </div>
 
-<!-- YouTube iframe for music -->
 <iframe id="ytPlayer" width="0" height="0"
   src="https://www.youtube.com/embed/Bah5yfKPDB4?enablejsapi=1&autoplay=1&loop=1&playlist=Bah5yfKPDB4"
   frameborder="0" allow="autoplay; encrypted-media"></iframe>
@@ -176,9 +236,7 @@ body {
 let player;
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('ytPlayer', {
-    events: {
-      'onReady': onPlayerReady
-    }
+    events: { 'onReady': onPlayerReady }
   });
 }
 function onPlayerReady(event) {
