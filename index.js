@@ -157,7 +157,7 @@ function setVolume(val){ if(isPlayerReady) player.setVolume(val); }
 
 function updateTime() {
   const now = new Date();
-  document.getElementById("currentTime").innerText = "Name: Kryth C. | Time: " + now.toLocaleTimeString();
+  document.getElementById("currentTime").innerText = "Time: " + now.toLocaleTimeString();
 }
 setInterval(updateTime, 1000);
 
