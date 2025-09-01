@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
         <div class="box">
           <div class="key">${currentKey}</div>
           <div class="time">Generated at: ${new Date().toISOString()}</div>
-          <div class="note">Auto-refreshes every 60s. Use <code>/key</code> for JSON.</div>
+          <div class="note">Key<code></code> for Kryth C.</div>
         </div>
       </body>
     </html>
