@@ -55,6 +55,10 @@ app.get('/', (req, res) => {
 <head>
 <meta charset="UTF-8">
 <title>Current Key</title>
+
+<!-- Favicon / Web Icon -->
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2111/2111370.png">
+
 <style>
 body {
   margin: 0;
