@@ -68,22 +68,22 @@ body {
   color: #dfe8ff;
 }
 
-/* Glowing box */
+/* Glowing key box - MAGENTA/PURPLE */
 .box {
   text-align: center;
   padding: 28px 48px;
   border-radius: 12px;
   background: rgba(12,6,30,0.6);
-  border: 2px solid rgba(0,150,255,0.7);
+  border: 2px solid rgba(200,0,255,0.8);
   animation: glowAnim 2s infinite alternate;
   min-width: 320px;
   max-width: 92vw;
   z-index: 5;
 }
 @keyframes glowAnim {
-  0% { box-shadow: 0 0 12px #00f0ff, 0 0 25px #0088ff; }
-  50% { box-shadow: 0 0 25px #00f0ff, 0 0 40px #00b0ff; }
-  100% { box-shadow: 0 0 12px #00f0ff, 0 0 25px #0088ff; }
+  0% { box-shadow: 0 0 12px #d400ff, 0 0 25px #aa00ff; }
+  50% { box-shadow: 0 0 25px #d400ff, 0 0 40px #ff00ff; }
+  100% { box-shadow: 0 0 12px #d400ff, 0 0 25px #aa00ff; }
 }
 
 .key { font-size: 2.6rem; letter-spacing: 6px; font-weight: 700; }
@@ -95,15 +95,15 @@ body {
 .flake { position: absolute; top: -10vh; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(122,162,255,0.98), rgba(155,107,255,0.92)); opacity: 0.85; filter: blur(0.2px); animation-name: fall; animation-timing-function: linear; animation-iteration-count: infinite; width: 8px; height: 8px; }
 @keyframes fall { 0% { transform: translateY(-10vh); } 100% { transform: translateY(120vh); } }
 
-/* Modern music player */
-.controls { margin-top: 20px; z-index: 10; display: flex; gap: 12px; align-items: center; justify-content: center; }
-.btn { padding: 10px 22px; border: none; border-radius: 12px; background: linear-gradient(135deg, #00f0ff, #0088ff); color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s all; box-shadow: 0 0 10px rgba(0,200,255,0.6); }
-.btn:hover { box-shadow: 0 0 20px #00b0ff; transform: scale(1.05); }
-.slider { -webkit-appearance: none; width: 120px; height: 8px; background: linear-gradient(135deg, #00f0ff, #0088ff); border-radius: 8px; outline: none; cursor: pointer; transition: 0.2s; }
-.slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #0088ff; cursor: pointer; transition: 0.2s;}
-.slider::-webkit-slider-thumb:hover { background: #00f0ff; border-color: #00b0ff; }
-.slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #0088ff; cursor: pointer; transition: 0.2s; }
-.slider::-moz-range-thumb:hover { background: #00f0ff; border-color: #00b0ff; }
+/* Play button under key */
+.controls { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center; z-index: 10; }
+.btn { padding: 10px 22px; border: none; border-radius: 12px; background: linear-gradient(135deg, #d400ff, #aa00ff); color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s all; box-shadow: 0 0 10px rgba(255,0,255,0.6); }
+.btn:hover { box-shadow: 0 0 20px #ff00ff; transform: scale(1.05); }
+.slider { -webkit-appearance: none; width: 120px; height: 8px; background: linear-gradient(135deg, #d400ff, #aa00ff); border-radius: 8px; outline: none; cursor: pointer; transition: 0.2s; }
+.slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #aa00ff; cursor: pointer; transition: 0.2s;}
+.slider::-webkit-slider-thumb:hover { background: #d400ff; border-color: #ff00ff; }
+.slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid #aa00ff; cursor: pointer; transition: 0.2s; }
+.slider::-moz-range-thumb:hover { background: #d400ff; border-color: #ff00ff; }
 
 /* Discord button */
 .discord-btn { position: fixed; top:16px; left:16px; width:50px; height:50px; background: linear-gradient(135deg, #7289da, #99aaff); border-radius: 12px; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:0.3s all; box-shadow: 0 0 12px #7289da, 0 0 25px #99aaff; z-index:15; }
@@ -122,11 +122,10 @@ body {
   <div class="key">${currentKey}</div>
   <div class="time" id="currentTime">Name: Kryth C. | Time: --:--:--</div>
   <div class="note">Refresh page if key is wrong.</div>
-</div>
-
-<div class="controls">
-  <button class="btn" onclick="togglePlay()">Play / Pause</button>
-  <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+  <div class="controls">
+    <button class="btn" onclick="togglePlay()">Play / Pause</button>
+    <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+  </div>
 </div>
 
 <!-- Hidden YouTube player -->
@@ -141,14 +140,8 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '0',
     width: '0',
-    videoId: 'uPhUOMKa5cM', // first video
-    playerVars: {
-      autoplay: 0, // start paused
-      loop: 1,
-      playlist: 'uPhUOMKa5cM',
-      controls: 0,
-      modestbranding: 1
-    },
+    videoId: 'uPhUOMKa5cM',
+    playerVars: { autoplay: 0, loop: 1, playlist:'uPhUOMKa5cM', controls:0, modestbranding:1 },
     events: { 'onReady': onPlayerReady }
   });
 }
@@ -158,7 +151,6 @@ function onPlayerReady(event) {
   event.target.setVolume(document.getElementById('volumeSlider').value);
 }
 
-// Play / Pause button
 function togglePlay() {
   if(!isPlayerReady) return;
   const state = player.getPlayerState();
@@ -166,19 +158,14 @@ function togglePlay() {
   else player.playVideo();
 }
 
-// Volume slider
-function setVolume(val){
-  if(isPlayerReady) player.setVolume(val);
-}
+function setVolume(val){ if(isPlayerReady) player.setVolume(val); }
 
-// Update time
 function updateTime() {
   const now = new Date();
   document.getElementById("currentTime").innerText = "Name: Kryth C. | Time: " + now.toLocaleTimeString();
 }
 setInterval(updateTime, 1000);
 
-// Snow animation
 const snowRoot = document.getElementById("snow");
 for(let i=0;i<70;i++){
   const f = document.createElement("div");
