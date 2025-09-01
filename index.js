@@ -135,22 +135,41 @@ body {
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player;
+let isPlayerReady = false;
+
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
-    height: '0', width: '0',
+    height: '0',
+    width: '0',
     videoId: 'uPhUOMKa5cM', // first video
-    playerVars: { autoplay: 1, loop: 1, playlist:'uPhUOMKa5cM', controls:0, modestbranding:1 },
-    events: { 'onReady': (e)=>{ e.target.playVideo(); } }
+    playerVars: {
+      autoplay: 0, // start paused
+      loop: 1,
+      playlist: 'uPhUOMKa5cM',
+      controls: 0,
+      modestbranding: 1
+    },
+    events: { 'onReady': onPlayerReady }
   });
 }
-function togglePlay() {
-  if(player && player.getPlayerState){
-    const state = player.getPlayerState();
-    if(state === 1) player.pauseVideo();
-    else player.playVideo();
-  }
+
+function onPlayerReady(event) {
+  isPlayerReady = true;
+  event.target.setVolume(document.getElementById('volumeSlider').value);
 }
-function setVolume(val){ if(player) player.setVolume(val); }
+
+// Play / Pause button
+function togglePlay() {
+  if(!isPlayerReady) return;
+  const state = player.getPlayerState();
+  if(state === YT.PlayerState.PLAYING) player.pauseVideo();
+  else player.playVideo();
+}
+
+// Volume slider
+function setVolume(val){
+  if(isPlayerReady) player.setVolume(val);
+}
 
 // Update time
 function updateTime() {
