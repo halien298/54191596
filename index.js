@@ -122,7 +122,7 @@ body {
 
 <div class="box">
   <div class="key">${currentKey}</div>
-  <div class="time" id="currentTime">Name: Kryth C. | Time: --:--:--</div>
+  <div class="time" id="currentTime">Time: --:--:--</div>
   <div class="note">Refresh page if key is wrong.</div>
   <div class="controls">
     <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
