@@ -52,106 +52,126 @@ app.get('/', (req, res) => {
   res.set('Expires', '0');
   res.set('Surrogate-Control', 'no-store');
 
-  const html = [
-    '<!doctype html>',
-    '<html>',
-    '<head>',
-    '<meta charset="utf-8"/>',
-    '<meta http-equiv="refresh" content="60">',
-    '<title>Current Key</title>',
-    '<style>',
-    'body {',
-    '  margin: 0;',
-    '  height: 100vh;',
-    '  display: flex;',
-    '  align-items: center;',
-    '  justify-content: center;',
-    '  background: #05050a;',
-    '  overflow: hidden;',
-    '  font-family: "Courier New", Courier, monospace;',
-    '  color: #dfe8ff;',
-    '}',
-    '.box {',
-    '  position: relative;',
-    '  z-index: 10;',
-    '  text-align: center;',
-    '  padding: 28px 48px;',
-    '  border-radius: 12px;',
-    '  background: rgba(12,6,30,0.6);',
-    '  box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 15px rgba(155,107,255,0.35);', // subtle glow
-    '  border: 1px solid rgba(255,255,255,0.03);',
-    '  min-width: 320px;',
-    '  max-width: 92vw;',
-    '}',
-    '.key {',
-    '  font-size: 2.6rem;',
-    '  letter-spacing: 6px;',
-    '  font-weight: 700;',
-    '  color: #dfe8ff;',
-    '}',
-    '.time {',
-    '  margin-top: 0.6rem;',
-    '  color: rgba(200,210,255,0.8);',
-    '  font-size: 0.95rem;',
-    '}',
-    '.note {',
-    '  margin-top: 0.9rem;',
-    '  color: rgba(170,170,210,0.8);',
-    '  font-size: 0.82rem;',
-    '}',
-    '.snow {',
-    '  position: absolute;',
-    '  inset: 0;',
-    '  z-index: 5;',
-    '  pointer-events: none;',
-    '  overflow: hidden;',
-    '}',
-    '.flake {',
-    '  position: absolute;',
-    '  top: -10vh;',
-    '  border-radius: 50%;',
-    '  background: radial-gradient(circle at 30% 30%, rgba(122,162,255,0.98), rgba(155,107,255,0.92));',
-    '  opacity: 0.85;',
-    '  filter: blur(0.2px);',
-    '  animation-name: fall;',
-    '  animation-timing-function: linear;',
-    '  animation-iteration-count: infinite;',
-    '  width: 8px;',
-    '  height: 8px;',
-    '}',
-    '@keyframes fall {',
-    '  0% { transform: translateY(-10vh); }',
-    '  100% { transform: translateY(120vh); }',
-    '}',
-    '</style>',
-    '</head>',
-    '<body>',
-    '  <div class="snow" id="snow"></div>',
-    '  <div class="box">',
-    '    <div class="key">' + currentKey + '</div>',
-    '    <div class="time">Generated at: ' + new Date().toISOString() + '</div>',
-    '    <div class="note">Key for Kryth C.</div>',
-    '  </div>',
-    '  <script>',
-    '    const snowRoot = document.getElementById("snow");',
-    '    for(let i=0;i<70;i++){',
-    '      const f = document.createElement("div");',
-    '      f.className = "flake";',
-    '      f.style.left = Math.random()*100+"%";',
-    '      const duration = 8 + Math.random()*10;',
-    '      f.style.animationDuration = duration+"s";',
-    '      f.style.animationDelay = (Math.random()*-12)+"s";',
-    '      const size = 6 + Math.random()*12;',
-    '      f.style.width = size+"px";',
-    '      f.style.height = size+"px";',
-    '      f.style.opacity = 0.5 + Math.random()*0.6;',
-    '      f.style.filter = "blur(" + Math.random()*1.6 + "px)";',
-    '      snowRoot.appendChild(f);',
-    '    }',
-    '  </script>',
-    '</body>',
-    '</html>'
-  ].join('\n');
+  const html = `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="refresh" content="60">
+<title>Current Key</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #05050a;
+  overflow: hidden;
+  font-family: "Courier New", Courier, monospace;
+  color: #dfe8ff;
+}
+
+.box {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 28px 48px;
+  border-radius: 12px;
+  background: rgba(12,6,30,0.6);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.03);
+  min-width: 320px;
+  max-width: 92vw;
+  animation: glowAnim 2.5s infinite alternate;
+}
+
+@keyframes glowAnim {
+  0% {
+    box-shadow: 0 0 15px #ff69b4, 0 0 30px #d67fff, 0 8px 30px rgba(0,0,0,0.6);
+  }
+  50% {
+    box-shadow: 0 0 25px #ff85d0, 0 0 40px #bb33ff, 0 8px 30px rgba(0,0,0,0.6);
+  }
+  100% {
+    box-shadow: 0 0 15px #ff69b4, 0 0 30px #d67fff, 0 8px 30px rgba(0,0,0,0.6);
+  }
+}
+
+.key {
+  font-size: 2.6rem;
+  letter-spacing: 6px;
+  font-weight: 700;
+  color: #dfe8ff;
+}
+
+.time {
+  margin-top: 0.6rem;
+  color: rgba(200,210,255,0.8);
+  font-size: 0.95rem;
+}
+
+.note {
+  margin-top: 0.9rem;
+  color: rgba(170,170,210,0.8);
+  font-size: 0.82rem;
+}
+
+.snow {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.flake {
+  position: absolute;
+  top: -10vh;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(122,162,255,0.98), rgba(155,107,255,0.92));
+  opacity: 0.85;
+  filter: blur(0.2px);
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  width: 8px;
+  height: 8px;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10vh); }
+  100% { transform: translateY(120vh); }
+}
+</style>
+</head>
+<body>
+<div class="snow" id="snow"></div>
+<div class="box">
+  <div class="key">${currentKey}</div>
+  <div class="time">Generated at: ${new Date().toISOString()}</div>
+  <div class="note">Key for Kryth C.</div>
+</div>
+<script>
+const snowRoot = document.getElementById("snow");
+for(let i=0;i<70;i++){
+  const f = document.createElement("div");
+  f.className = "flake";
+  f.style.left = Math.random()*100+"%";
+  const duration = 8 + Math.random()*10;
+  f.style.animationDuration = duration+"s";
+  f.style.animationDelay = (Math.random()*-12)+"s";
+  const size = 6 + Math.random()*12;
+  f.style.width = size+"px";
+  f.style.height = size+"px";
+  f.style.opacity = 0.5 + Math.random()*0.6;
+  f.style.filter = "blur(" + Math.random()*1.6 + "px)";
+  snowRoot.appendChild(f);
+}
+</script>
+</body>
+</html>
+`;
 
   res.send(html);
 });
