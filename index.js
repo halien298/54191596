@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 <title>Current Key</title>
 
 <!-- Favicon / Web Icon -->
-<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2111/2111370.png">
+<link rel="icon" type="image/png" href="https://i.pinimg.com/1200x/8b/b8/87/8bb887efbcf379cff28271ea480e705f.jpg">
 
 <style>
 body {
@@ -141,8 +141,8 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '0',
     width: '0',
-    videoId: 'uPhUOMKa5cM',
-    playerVars: { autoplay: 1, loop: 1, playlist:'uPhUOMKa5cM', controls:0, modestbranding:1 },
+    videoId: 'Bah5yfKPDB4',
+    playerVars: { autoplay: 1, loop: 1, playlist:'Bah5yfKPDB4', controls:0, modestbranding:1 },
     events: { 'onReady': onPlayerReady }
   });
 }
