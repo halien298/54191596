@@ -4,8 +4,8 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KEY_LENGTH = 30;
-const CHARS = 'qwerztzuioQWRZUOPASDLKHFGYXCDVNMpasdf$@ghjklycvbnm1.9123456789+';
+const KEY_LENGTH = 17;
+const CHARS = 'QWERTZUIOPASDFGHJKLYXCVBNMqwertzuiopasdfghjklyxcvbnm123456789@€Đđ-';
 
 let currentKey = generateKey(KEY_LENGTH);
 console.log("Initial key: " + currentKey);
