@@ -123,7 +123,7 @@ body {
 <div class="box">
   <div class="key">${currentKey}</div>
   <div class="time" id="currentTime">Time: --:--:--</div>
-  <div class="note">Refresh page if key is wrong.</div>
+  <div class="note">Refresh page if the key is wrong.</div>
   <div class="controls">
     <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
   </div>
@@ -141,8 +141,8 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '0',
     width: '0',
-    videoId: 'Tn5UyGN-Y-o',
-    playerVars: { autoplay: 1, loop: 1, playlist:'Bah5yfKPDB4', controls:0, modestbranding:1 },
+    videoId: '',
+    playerVars: { autoplay: 1, loop: 1, playlist:'Tn5UyGN-Y-o', controls:0, modestbranding:1 },
     events: { 'onReady': onPlayerReady }
   });
 }
