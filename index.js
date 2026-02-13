@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KEY_LENGTH = 6;
+const KEY_LENGTH = 15;
 const CHARS = 'QWERTZUIOPASDFGHJKLYXCVBNMqwertzuiopasdfghjklyxcvbnm123456789@€Đđ-';
 
 let currentKey = generateKey(KEY_LENGTH);
@@ -116,7 +116,7 @@ body {
 <body>
 <div class="snow" id="snow"></div>
 
-<a class="discord-btn" href="https://discord.gg/Nt6fkTU2Au" target="_blank">
+<a class="discord-btn" href="https://discord.gg/AAnmrCTRk6" target="_blank">
   <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png"/>
 </a>
 
@@ -142,7 +142,7 @@ function onYouTubeIframeAPIReady() {
     height: '0',
     width: '0',
     videoId: '',
-    playerVars: { autoplay: 1, loop: 1, playlist:'8sTYsQ9mNAM', controls:0, modestbranding:1 },
+    playerVars: { autoplay: 1, loop: 1, playlist:'4ABgSzsPGDc', controls:0, modestbranding:1 },
     events: { 'onReady': onPlayerReady }
   });
 }
