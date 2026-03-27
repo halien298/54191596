@@ -201,7 +201,7 @@ app.get('/', (req, res) => {
 
   <!-- Center Content: Cropped Icon + Discord + YouTube -->
   <div class="center-content">
-    <img src="https://i.pinimg.com/736x/8b/b8/87/8bb887efbcf379cff28271ea480e705f.jpg" 
+    <img src="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412" 
          class="main-icon" alt="Idiot's Playground">
     
     <div class="links">
