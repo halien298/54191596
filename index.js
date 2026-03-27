@@ -63,19 +63,20 @@ app.get('/', (req, res) => {
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      background: linear-gradient(180deg, #1a0033, #330066, #ff00aa);
+      background: linear-gradient(180deg, #0a001f, #1a0033, #2a004d);
       font-family: 'VT323', monospace;
-      color: #ffccff;
+      color: #ccddff;
       position: relative;
     }
 
+    /* Darker Vaporwave Background */
     .bg-grid {
       position: absolute;
       inset: 0;
       background: 
-        linear-gradient(rgba(255,0,255,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,255,0.08) 1px, transparent 1px);
-      background-size: 50px 50px;
+        linear-gradient(rgba(100,0,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,255,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
       pointer-events: none;
       z-index: 1;
     }
@@ -83,31 +84,33 @@ app.get('/', (req, res) => {
     .sunset {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(255,100,200,0.4), transparent 70%);
+      background: radial-gradient(circle at 50% 40%, rgba(80,40,255,0.25), transparent 75%);
       z-index: 2;
-      animation: sunsetPulse 20s infinite alternate;
+      animation: sunsetPulse 25s infinite alternate;
     }
 
     @keyframes sunsetPulse {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
+      0% { opacity: 0.5; }
+      100% { opacity: 0.85; }
     }
 
+    /* Top Right Key */
     .top-key {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       padding: 12px 24px;
-      border: 3px solid #ff00ff;
+      border: 3px solid #aa44ff;
       border-radius: 8px;
       font-size: 1.8rem;
       letter-spacing: 4px;
       z-index: 100;
-      box-shadow: 0 0 20px #ff00ff;
-      text-shadow: 0 0 10px #ff00ff;
+      box-shadow: 0 0 20px #aa44ff;
+      text-shadow: 0 0 10px #aa44ff;
     }
 
+    /* Center Box */
     .box {
       position: absolute;
       top: 50%;
@@ -115,11 +118,11 @@ app.get('/', (req, res) => {
       transform: translate(-50%, -50%);
       text-align: center;
       padding: 40px 60px;
-      background: rgba(10, 5, 40, 0.85);
-      border: 4px solid #ff00ff;
+      background: rgba(8, 4, 35, 0.88);
+      border: 4px solid #aa44ff;
       border-radius: 15px;
       z-index: 10;
-      box-shadow: 0 0 40px #ff00ff, 0 0 80px rgba(255,0,255,0.5);
+      box-shadow: 0 0 40px #aa44ff, 0 0 70px rgba(170,68,255,0.4);
       min-width: 420px;
     }
 
@@ -127,30 +130,35 @@ app.get('/', (req, res) => {
       font-size: 3.2rem;
       letter-spacing: 8px;
       font-weight: bold;
-      text-shadow: 0 0 15px #ff00ff, 0 0 30px #aa00ff;
+      text-shadow: 0 0 15px #aa44ff, 0 0 30px #7733cc;
       margin-bottom: 15px;
     }
 
     .time {
       font-size: 1.4rem;
-      color: #ccffcc;
+      color: #aaccff;
       margin-bottom: 10px;
     }
 
     .note {
       font-size: 1.1rem;
-      color: #ffccff;
+      color: #bbddff;
       opacity: 0.9;
     }
 
+    /* Simple non-laggy vaporwave particles (no cursor follow) */
     #particleCanvas {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 3;
       pointer-events: none;
+      opacity: 0.75;
     }
 
+    /* Spotify Players */
     .spotify-container {
       margin-top: 25px;
       display: flex;
@@ -161,13 +169,13 @@ app.get('/', (req, res) => {
     .spotify-main {
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 30px rgba(30, 215, 96, 0.8);
+      box-shadow: 0 0 30px rgba(30, 215, 96, 0.7);
     }
 
     .spotify-mini {
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 20px rgba(30, 215, 96, 0.6);
+      box-shadow: 0 0 18px rgba(30, 215, 96, 0.5);
     }
 
     .discord-btn {
@@ -188,8 +196,8 @@ app.get('/', (req, res) => {
     }
 
     .discord-btn:hover {
-      transform: scale(1.15) rotate(10deg);
-      box-shadow: 0 0 40px #99aaff;
+      transform: scale(1.12);
+      box-shadow: 0 0 35px #99aaff;
     }
 
     .discord-btn img {
@@ -241,44 +249,47 @@ app.get('/', (req, res) => {
   </div>
 
   <script>
-    // Live clock
+    // Live time
     function updateTime() {
       const now = new Date();
-      document.getElementById("currentTime").innerText = "Time: " + now.toLocaleTimeString('en-US', { hour12: false });
+      document.getElementById("currentTime").innerText = 
+        "Time: " + now.toLocaleTimeString('en-US', { hour12: false });
     }
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Radiation particle system (dots + connecting lines that follow cursor)
+    // Simple smooth vaporwave particles (no cursor following - much less lag)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
-    let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let intensity = 1;
 
     class Particle {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.vx = (Math.random() - 0.5) * 4.5;
-        this.vy = (Math.random() - 0.5) * 4.5;
-        this.size = Math.random() * 4 + 2.5;
-        this.life = 110 + Math.random() * 40;
-        this.color = Math.random() > 0.5 ? '#00ffff' : '#ff00ff';
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 1.2;
+        this.vy = (Math.random() - 0.5) * 1.2;
+        this.size = Math.random() * 3.5 + 1.5;
+        this.life = 180 + Math.random() * 120;
+        this.color = Math.random() > 0.5 ? '#88aaff' : '#cc77ff';
       }
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.vx *= 0.975;
-        this.vy *= 0.975;
-        this.life -= 1.2;
-        this.size *= 0.99;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        this.life -= 1;
+        if (this.life <= 0) this.reset();
       }
       draw() {
-        ctx.shadowBlur = 14 * intensity;
+        ctx.shadowBlur = 12 * intensity;
         ctx.shadowColor = this.color;
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = this.life / 120;
+        ctx.globalAlpha = (this.life / 250) * 0.7;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -293,55 +304,25 @@ app.get('/', (req, res) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    document.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      for (let i = 0; i < 7; i++) {
-        particles.push(new Particle(mouse.x, mouse.y));
-      }
-    });
-
-    function connectParticles() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.hypot(dx, dy);
-          if (distance < 155) {
-            const alpha = (1 - distance / 155) * 0.9;
-            ctx.strokeStyle = 'rgba(0, 255, 255, ' + alpha + ')';
-            ctx.lineWidth = 1.8 * intensity;
-            ctx.shadowBlur = 18 * intensity;
-            ctx.shadowColor = '#00ffff';
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
+    // Create initial particles
+    for (let i = 0; i < 65; i++) {
+      particles.push(new Particle());
     }
 
-    // Fake music beat pulse
+    // Gentle beat pulse
     setInterval(() => {
-      intensity = 2.2;
-      setTimeout(() => intensity = 1, 180);
-    }, 420);
+      intensity = 1.8;
+      setTimeout(() => { intensity = 1; }, 220);
+    }, 480);
 
     function animate() {
-      ctx.fillStyle = 'rgba(26, 0, 51, 0.12)';
+      // Very soft fade for smooth vaporwave glow
+      ctx.fillStyle = 'rgba(10, 0, 30, 0.085)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      for (let i = particles.length - 1; i >= 0; i--) {
+      for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
-        if (particles[i].life <= 0) particles.splice(i, 1);
-      }
-
-      connectParticles();
-
-      if (Math.random() < 0.35) {
-        particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
       }
 
       requestAnimationFrame(animate);
@@ -355,7 +336,8 @@ app.get('/', (req, res) => {
         .then(data => {
           document.getElementById('topKey').textContent = data.key;
           document.getElementById('centerKey').textContent = data.key;
-        });
+        })
+        .catch(() => {});
     }, 5000);
   </script>
 </body>
