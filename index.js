@@ -94,7 +94,7 @@ app.get('/', (req, res) => {
       100% { opacity: 0.85; }
     }
 
-    /* Top Right Key - now with key on the left side */
+    /* Top Right Key */
     .top-key {
       position: fixed;
       top: 20px;
@@ -119,7 +119,7 @@ app.get('/', (req, res) => {
       opacity: 0.9;
     }
 
-    /* Center Box - key removed from center */
+    /* Center Box - no key */
     .box {
       position: absolute;
       top: 50%;
@@ -138,7 +138,7 @@ app.get('/', (req, res) => {
     .time {
       font-size: 1.4rem;
       color: #aaccff;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .note {
@@ -147,7 +147,7 @@ app.get('/', (req, res) => {
       opacity: 0.9;
     }
 
-    /* Radiation effect - particles + lines (no cursor follow, music synced) */
+    /* Radiation - ONLY LINES (no particles) */
     #particleCanvas {
       position: absolute;
       top: 0;
@@ -156,33 +156,50 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 3;
       pointer-events: none;
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
-    /* Spotify Players */
-    .spotify-container {
-      margin-top: 25px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .spotify-main {
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(30, 215, 96, 0.7);
-    }
-
-    .spotify-mini {
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 18px rgba(30, 215, 96, 0.5);
-    }
-
-    /* Bigger & clearer Discord button */
-    .discord-btn {
+    /* Spotify Controls - Top Left */
+    .music-controls {
       position: fixed;
       top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(0,0,0,0.7);
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: 2px solid #7289da;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 20px #7289da;
+    }
+
+    .music-controls button {
+      background: #7289da;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .music-controls button:hover {
+      background: #5865f2;
+      transform: scale(1.08);
+    }
+
+    .volume-slider {
+      width: 140px;
+      accent-color: #7289da;
+    }
+
+    .discord-btn {
+      position: fixed;
+      top: 95px;
       left: 20px;
       width: 68px;
       height: 68px;
@@ -215,43 +232,34 @@ app.get('/', (req, res) => {
   <div class="sunset"></div>
   <canvas id="particleCanvas"></canvas>
 
-  <!-- Top Right Key with label on left -->
+  <!-- Top Right Key -->
   <div class="top-key" id="topKey">
     <span class="top-key-label">KEY:</span>
     ${currentKey}
   </div>
 
-  <!-- Bigger Discord Button -->
+  <!-- Music Controls - Top Left (autoplay on load) -->
+  <div class="music-controls">
+    <button id="playBtn">▶</button>
+    <button id="nextBtn">⏭</button>
+    <button id="stopBtn">■</button>
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="70">
+  </div>
+
+  <!-- Discord Button (moved below controls) -->
   <a class="discord-btn" href="https://discord.gg/AAnmrCTRk6" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord">
   </a>
 
   <div class="box">
     <div class="time" id="currentTime">Time: --:--:--</div>
-    <div class="note">Key changes every minute • Music starts on load</div>
+    <div class="note">Key changes every minute • Music starts automatically</div>
 
-    <div class="spotify-container">
-      <div class="spotify-main">
-        <iframe style="border-radius:12px" 
-                src="https://open.spotify.com/embed/track/7LKfKpO56W1l3AUbfiwAeF?utm_source=generator" 
-                width="100%" height="152" frameBorder="0" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-        </iframe>
-      </div>
-      <div class="spotify-mini">
-        <iframe style="border-radius:12px" 
-                src="https://open.spotify.com/embed/track/6kexauPCWYPmDtmHzDf3Hw?utm_source=generator" 
-                width="100%" height="80" frameBorder="0" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-        </iframe>
-      </div>
-      <div class="spotify-mini">
-        <iframe style="border-radius:12px" 
-                src="https://open.spotify.com/embed/track/2ZuMOcabaMzyXPPjFoYQGe?utm_source=generator" 
-                width="100%" height="80" frameBorder="0" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-        </iframe>
-      </div>
+    <!-- Hidden Spotify Players -->
+    <div id="spotifyPlayers" style="display:none;">
+      <iframe id="player1" src="https://open.spotify.com/embed/track/7LKfKpO56W1l3AUbfiwAeF?utm_source=generator" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      <iframe id="player2" src="https://open.spotify.com/embed/track/6kexauPCWYPmDtmHzDf3Hw?utm_source=generator" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      <iframe id="player3" src="https://open.spotify.com/embed/track/2ZuMOcabaMzyXPPjFoYQGe?utm_source=generator" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
   </div>
 
@@ -265,45 +273,12 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Radiation effect - particles + connecting lines (music synced, no cursor)
+    // ONLY RADIATION LINES (no particles)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
+    let points = [];
     let intensity = 1.0;
-    let hueShift = 200; // starts in blue-purple range
-
-    class Particle {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height * 0.7;
-        this.vx = (Math.random() - 0.5) * 1.6;
-        this.vy = (Math.random() - 0.5) * 1.4 + 0.6;
-        this.size = Math.random() * 4 + 2;
-        this.life = 140 + Math.random() * 80;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vx *= 0.985;
-        this.vy *= 0.985;
-        this.life -= 1.1;
-        if (this.life <= 0 || this.y > canvas.height) this.reset();
-      }
-      draw() {
-        const color = \`hsl(\${hueShift}, 100%, 75%)\`;
-        ctx.shadowBlur = 22 * intensity;
-        ctx.shadowColor = color;
-        ctx.fillStyle = color;
-        ctx.globalAlpha = (this.life / 200) * 0.85;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-    }
+    let hue = 200;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -312,61 +287,66 @@ app.get('/', (req, res) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Spawn radiation particles
-    for (let i = 0; i < 85; i++) {
-      particles.push(new Particle());
+    // Create random points for lines
+    function createPoints() {
+      points = [];
+      for (let i = 0; i < 45; i++) {
+        points.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8
+        });
+      }
+    }
+    createPoints();
+
+    function updatePoints() {
+      for (let p of points) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      }
     }
 
-    function connectRadiation() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
+    function drawRadiationLines() {
+      ctx.fillStyle = 'rgba(10, 0, 30, 0.12)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < points.length; i++) {
+        for (let j = i + 1; j < points.length; j++) {
+          const dx = points[i].x - points[j].x;
+          const dy = points[i].y - points[j].y;
           const dist = Math.hypot(dx, dy);
-          if (dist < 140) {
-            const alpha = (1 - dist / 140) * 0.55 * intensity;
-            ctx.strokeStyle = \`rgba(120, 180, 255, \${alpha})\`;
-            ctx.lineWidth = 1.4 * intensity;
-            ctx.shadowBlur = 15 * intensity;
-            ctx.shadowColor = '#88ccff';
+          if (dist < 180) {
+            const alpha = (1 - dist / 180) * 0.65 * intensity;
+            ctx.strokeStyle = \`rgba(100, 180, 255, \${alpha})\`;
+            ctx.lineWidth = 1.6 * intensity;
+            ctx.shadowBlur = 18 * intensity;
+            ctx.shadowColor = '#77aaff';
             ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[j].x, points[j].y);
             ctx.stroke();
           }
         }
       }
     }
 
-    // Music-synced color & intensity pulse (radiation reacts to beat)
-    let beatInterval = 460; // tuned to the tracks
+    // Music sync pulse for lines
     setInterval(() => {
-      intensity = 2.4;
-      hueShift = 260; // shift toward magenta/purple on beat
+      intensity = 2.6;
+      hue = 270;
       setTimeout(() => {
         intensity = 1.0;
-        hueShift = 200; // back to blue-purple
-      }, 160);
-    }, beatInterval);
+        hue = 200;
+      }, 140);
+    }, 450);
 
     function animate() {
-      ctx.fillStyle = 'rgba(10, 0, 30, 0.11)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update();
-        particles[i].draw();
-      }
-
-      connectRadiation();
-
-      // Occasional extra radiation burst
-      if (Math.random() < 0.28) {
-        for (let i = 0; i < 6; i++) {
-          particles.push(new Particle());
-        }
-      }
-
+      updatePoints();
+      drawRadiationLines();
       requestAnimationFrame(animate);
     }
     animate();
@@ -377,11 +357,64 @@ app.get('/', (req, res) => {
         .then(res => res.json())
         .then(data => {
           const keyEl = document.getElementById('topKey');
-          // Keep the label and replace only the key part
           keyEl.innerHTML = '<span class="top-key-label">KEY:</span> ' + data.key;
-        })
-        .catch(() => {});
+        });
     }, 5000);
+
+    // Spotify Music Controls with Autoplay on load
+    let currentTrack = 0;
+    const tracks = [
+      document.getElementById('player1'),
+      document.getElementById('player2'),
+      document.getElementById('player3')
+    ];
+
+    const playBtn = document.getElementById('playBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    // Autoplay first track when site loads
+    window.addEventListener('load', () => {
+      tracks[0].style.display = 'block';
+      tracks[0].src = tracks[0].src + "&autoplay=1"; // force autoplay
+      setTimeout(() => {
+        try { tracks[0].contentWindow.postMessage('play', '*'); } catch(e) {}
+      }, 800);
+    });
+
+    function switchTrack(newIndex) {
+      tracks.forEach((t, i) => {
+        t.style.display = i === newIndex ? 'block' : 'none';
+      });
+      currentTrack = newIndex;
+    }
+
+    playBtn.addEventListener('click', () => {
+      try {
+        tracks[currentTrack].contentWindow.postMessage('play', '*');
+      } catch(e) {}
+    });
+
+    nextBtn.addEventListener('click', () => {
+      let next = (currentTrack + 1) % tracks.length;
+      switchTrack(next);
+    });
+
+    stopBtn.addEventListener('click', () => {
+      try {
+        tracks[currentTrack].contentWindow.postMessage('pause', '*');
+      } catch(e) {}
+    });
+
+    volumeSlider.addEventListener('input', () => {
+      const vol = volumeSlider.value;
+      tracks.forEach(track => {
+        try {
+          track.contentWindow.postMessage({volume: vol}, '*');
+        } catch(e) {}
+      });
+    });
   </script>
 </body>
 </html>`;
