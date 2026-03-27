@@ -142,7 +142,7 @@ function onYouTubeIframeAPIReady() {
     height: '0',
     width: '0',
     videoId: '',
-    playerVars: { autoplay: 1, loop: 1, playlist:'4ABgSzsPGDc', controls:0, modestbranding:1 },
+    playerVars: { autoplay: 1, loop: 1, playlist:'OQLTzSKfWq8', controls:0, modestbranding:1 },
     events: { 'onReady': onPlayerReady }
   });
 }
