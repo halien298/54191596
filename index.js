@@ -49,6 +49,9 @@ app.get('/', (req, res) => {
   res.set('Surrogate-Control', 'no-store');
   res.set('Access-Control-Allow-Origin', '*');
 
+  // 1 in 10 chance for fsociety secret mode
+  const isFsociety = Math.random() < 0.1;
+
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -63,173 +66,105 @@ app.get('/', (req, res) => {
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      background: linear-gradient(180deg, #0a001f, #1a0033, #2a004d);
-      font-family: 'VT323', monospace;
-      color: #ccddff;
+      ${isFsociety ? 
+        'background: #001100; color: #00ff41; font-family: monospace;' : 
+        'background: linear-gradient(180deg, #0a0014, #1a0028, #2a003d); font-family: "VT323", monospace; color: #ccddff;'
+      }
       position: relative;
     }
 
-    /* Darker Vaporwave Background */
+    /* Normal Vaporwave Dark */
+    ${!isFsociety ? `
     .bg-grid {
-      position: absolute;
-      inset: 0;
-      background: 
-        linear-gradient(rgba(100,0,255,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,180,255,0.06) 1px, transparent 1px);
+      position: absolute; inset: 0;
+      background: linear-gradient(rgba(100,0,255,0.05) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(0,180,255,0.05) 1px, transparent 1px);
       background-size: 60px 60px;
-      pointer-events: none;
       z-index: 1;
     }
-
     .sunset {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 40%, rgba(80,40,255,0.25), transparent 75%);
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(80,40,255,0.2), transparent 75%);
       z-index: 2;
       animation: sunsetPulse 25s infinite alternate;
     }
-
-    @keyframes sunsetPulse {
-      0% { opacity: 0.5; }
-      100% { opacity: 0.85; }
+    @keyframes sunsetPulse { 0% { opacity: 0.45; } 100% { opacity: 0.75; } }
+    ` : `
+    /* fsociety style */
+    body { animation: glitch 0.8s infinite alternate; }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
     }
+    .scanline {
+      position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0,255,65,0.08) 2px, rgba(0,255,65,0.08) 4px);
+      pointer-events: none; z-index: 5; animation: scan 4s linear infinite;
+    }
+    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+    `}
 
-    /* Top Right Key */
     .top-key {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.75);
-      padding: 12px 24px;
-      border: 3px solid #aa44ff;
-      border-radius: 8px;
-      font-size: 1.8rem;
-      letter-spacing: 4px;
-      z-index: 100;
-      box-shadow: 0 0 20px #aa44ff;
-      text-shadow: 0 0 10px #aa44ff;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      position: fixed; top: 20px; right: 20px;
+      background: rgba(0,0,0,0.8); padding: 12px 24px;
+      border: 3px solid ${isFsociety ? '#00ff41' : '#aa44ff'};
+      border-radius: 8px; font-size: 1.8rem; letter-spacing: 4px;
+      z-index: 100; box-shadow: 0 0 20px ${isFsociety ? '#00ff41' : '#aa44ff'};
+      display: flex; align-items: center; gap: 12px;
     }
 
-    .top-key-label {
-      font-size: 1.1rem;
-      color: #88aaff;
-      opacity: 0.9;
-    }
+    .top-key-label { font-size: 1.1rem; color: ${isFsociety ? '#00ff41' : '#88aaff'}; }
 
-    /* Center Box - no key */
+    /* Center - only time */
     .box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      padding: 40px 60px;
-      background: rgba(8, 4, 35, 0.88);
-      border: 4px solid #aa44ff;
-      border-radius: 15px;
-      z-index: 10;
-      box-shadow: 0 0 40px #aa44ff, 0 0 70px rgba(170,68,255,0.4);
-      min-width: 420px;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center; padding: 30px 50px;
+      background: rgba(8,4,35,0.9); border: 4px solid ${isFsociety ? '#00ff41' : '#aa44ff'};
+      border-radius: 15px; z-index: 10; min-width: 340px;
+      box-shadow: 0 0 40px ${isFsociety ? '#00ff41' : '#aa44ff'};
     }
 
-    .time {
-      font-size: 1.4rem;
-      color: #aaccff;
-      margin-bottom: 15px;
+    .time { font-size: 1.8rem; color: ${isFsociety ? '#00ff41' : '#aaccff'}; margin: 0; }
+
+    /* Radiation - only lines */
+    #particleCanvas { position: absolute; top:0; left:0; width:100%; height:100%; z-index:3; pointer-events:none; opacity:0.85; }
+
+    /* Music info + playlist */
+    .music-info {
+      text-align: center; margin-bottom: 15px;
+    }
+    .music-cover {
+      width: 180px; height: 180px; border-radius: 12px; border: 3px solid #7289da; box-shadow: 0 0 25px #7289da;
+    }
+    .music-title { font-size: 1.6rem; margin: 12px 0 4px; }
+    .music-artist { font-size: 1.2rem; opacity: 0.85; }
+
+    /* Spotify Playlist Embed */
+    .spotify-container iframe {
+      border-radius: 12px; box-shadow: 0 0 30px rgba(30,215,96,0.6);
     }
 
-    .note {
-      font-size: 1.1rem;
-      color: #bbddff;
-      opacity: 0.9;
-    }
-
-    /* Radiation - ONLY LINES (no particles) */
-    #particleCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-      pointer-events: none;
-      opacity: 0.9;
-    }
-
-    /* Spotify Controls - Top Left */
+    /* Music controls top left */
     .music-controls {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 100;
-      background: rgba(0,0,0,0.7);
-      padding: 12px 18px;
-      border-radius: 12px;
-      border: 2px solid #7289da;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      position: fixed; top: 20px; left: 20px; z-index: 100;
+      background: rgba(0,0,0,0.75); padding: 12px 18px; border-radius: 12px;
+      border: 2px solid #7289da; display: flex; align-items: center; gap: 12px;
       box-shadow: 0 0 20px #7289da;
     }
-
     .music-controls button {
-      background: #7289da;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-family: 'VT323', monospace;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: #7289da; color: white; border: none; padding: 8px 14px;
+      border-radius: 8px; font-family: 'VT323', monospace; font-size: 1.2rem; cursor: pointer;
     }
-
-    .music-controls button:hover {
-      background: #5865f2;
-      transform: scale(1.08);
-    }
-
-    .volume-slider {
-      width: 140px;
-      accent-color: #7289da;
-    }
-
-    .discord-btn {
-      position: fixed;
-      top: 95px;
-      left: 20px;
-      width: 68px;
-      height: 68px;
-      background: linear-gradient(135deg, #7289da, #5865f2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      box-shadow: 0 0 30px #7289da;
-      transition: all 0.3s;
-      z-index: 100;
-    }
-
-    .discord-btn:hover {
-      transform: scale(1.15);
-      box-shadow: 0 0 45px #99aaff;
-    }
-
-    .discord-btn img {
-      width: 38px;
-      height: 38px;
-      filter: brightness(1.1);
-    }
+    .music-controls button:hover { background: #5865f2; transform: scale(1.08); }
+    .volume-slider { width: 130px; accent-color: #7289da; }
   </style>
 </head>
 <body>
 
-  <div class="bg-grid"></div>
-  <div class="sunset"></div>
+  ${!isFsociety ? '<div class="bg-grid"></div><div class="sunset"></div>' : '<div class="scanline"></div>'}
   <canvas id="particleCanvas"></canvas>
 
   <!-- Top Right Key -->
@@ -238,93 +173,89 @@ app.get('/', (req, res) => {
     ${currentKey}
   </div>
 
-  <!-- Music Controls - Top Left (autoplay on load) -->
+  <!-- Music Controls -->
   <div class="music-controls">
     <button id="playBtn">▶</button>
     <button id="nextBtn">⏭</button>
     <button id="stopBtn">■</button>
-    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="70">
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="75">
   </div>
-
-  <!-- Discord Button (moved below controls) -->
-  <a class="discord-btn" href="https://discord.gg/AAnmrCTRk6" target="_blank">
-    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord">
-  </a>
 
   <div class="box">
     <div class="time" id="currentTime">Time: --:--:--</div>
-    <div class="note">Key changes every minute • Music starts automatically</div>
+  </div>
 
-    <!-- Hidden Spotify Players -->
-    <div id="spotifyPlayers" style="display:none;">
-      <iframe id="player1" src="https://open.spotify.com/embed/track/7LKfKpO56W1l3AUbfiwAeF?utm_source=generator" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-      <iframe id="player2" src="https://open.spotify.com/embed/track/6kexauPCWYPmDtmHzDf3Hw?utm_source=generator" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-      <iframe id="player3" src="https://open.spotify.com/embed/track/2ZuMOcabaMzyXPPjFoYQGe?utm_source=generator" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  <!-- Music Info + Playlist -->
+  <div style="position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:10; text-align:center; width:90%; max-width:520px;">
+    <div class="music-info">
+      ${isFsociety ? `
+        <img src="https://i.imgur.com/2fQJ8kP.png" class="music-cover" alt="fsociety">
+        <div class="music-title">Society</div>
+        <div class="music-artist">pathetic240px</div>
+      ` : `
+        <img src="https://i.scdn.co/image/ab67616d0000b273... (playlist cover would go here)" class="music-cover" alt="Playlist">
+        <div class="music-title">Idiot's Vibes</div>
+        <div class="music-artist">Curated Playlist</div>
+      `}
     </div>
+    <iframe id="spotifyPlaylist" 
+            src="https://open.spotify.com/embed/playlist/12sFokgtLMlhcYVVbLFoqP?utm_source=generator&autoplay=1" 
+            width="100%" height="380" frameBorder="0" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
   </div>
 
   <script>
     // Live time
     function updateTime() {
-      const now = new Date();
-      document.getElementById("currentTime").innerText = 
-        "Time: " + now.toLocaleTimeString('en-US', { hour12: false });
+      document.getElementById("currentTime").innerText = "Time: " + new Date().toLocaleTimeString('en-US', { hour12: false });
     }
     setInterval(updateTime, 1000);
     updateTime();
 
-    // ONLY RADIATION LINES (no particles)
+    // Only radiation lines
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
-    let intensity = 1.0;
-    let hue = 200;
+    let intensity = 1;
 
-    function resizeCanvas() {
+    function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    window.addEventListener('resize', resize);
+    resize();
 
-    // Create random points for lines
-    function createPoints() {
-      points = [];
-      for (let i = 0; i < 45; i++) {
-        points.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.8,
-          vy: (Math.random() - 0.5) * 0.8
-        });
-      }
+    for (let i = 0; i < 48; i++) {
+      points.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.9,
+        vy: (Math.random() - 0.5) * 0.9
+      });
     }
-    createPoints();
 
-    function updatePoints() {
+    function animate() {
+      ctx.fillStyle = 'rgba(10, 0, 30, 0.13)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       for (let p of points) {
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.vx; p.y += p.vy;
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
       }
-    }
-
-    function drawRadiationLines() {
-      ctx.fillStyle = 'rgba(10, 0, 30, 0.12)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let i = 0; i < points.length; i++) {
-        for (let j = i + 1; j < points.length; j++) {
+        for (let j = i+1; j < points.length; j++) {
           const dx = points[i].x - points[j].x;
           const dy = points[i].y - points[j].y;
           const dist = Math.hypot(dx, dy);
-          if (dist < 180) {
-            const alpha = (1 - dist / 180) * 0.65 * intensity;
-            ctx.strokeStyle = \`rgba(100, 180, 255, \${alpha})\`;
-            ctx.lineWidth = 1.6 * intensity;
-            ctx.shadowBlur = 18 * intensity;
-            ctx.shadowColor = '#77aaff';
+          if (dist < 175) {
+            const alpha = (1 - dist / 175) * 0.7 * intensity;
+            ctx.strokeStyle = \`rgba(110, 170, 255, \${alpha})\`;
+            ctx.lineWidth = 1.7 * intensity;
+            ctx.shadowBlur = 20 * intensity;
+            ctx.shadowColor = '#88bbff';
             ctx.beginPath();
             ctx.moveTo(points[i].x, points[i].y);
             ctx.lineTo(points[j].x, points[j].y);
@@ -332,88 +263,26 @@ app.get('/', (req, res) => {
           }
         }
       }
-    }
-
-    // Music sync pulse for lines
-    setInterval(() => {
-      intensity = 2.6;
-      hue = 270;
-      setTimeout(() => {
-        intensity = 1.0;
-        hue = 200;
-      }, 140);
-    }, 450);
-
-    function animate() {
-      updatePoints();
-      drawRadiationLines();
       requestAnimationFrame(animate);
     }
     animate();
 
+    // Beat sync for lines
+    setInterval(() => { intensity = 2.8; setTimeout(() => intensity = 1, 130); }, 440);
+
     // Auto refresh key
     setInterval(() => {
-      fetch('/key')
-        .then(res => res.json())
-        .then(data => {
-          const keyEl = document.getElementById('topKey');
-          keyEl.innerHTML = '<span class="top-key-label">KEY:</span> ' + data.key;
-        });
+      fetch('/key').then(r => r.json()).then(d => {
+        document.getElementById('topKey').innerHTML = '<span class="top-key-label">KEY:</span> ' + d.key;
+      });
     }, 5000);
 
-    // Spotify Music Controls with Autoplay on load
-    let currentTrack = 0;
-    const tracks = [
-      document.getElementById('player1'),
-      document.getElementById('player2'),
-      document.getElementById('player3')
-    ];
-
-    const playBtn = document.getElementById('playBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const stopBtn = document.getElementById('stopBtn');
+    // Music controls (with autoplay already in iframe)
     const volumeSlider = document.getElementById('volumeSlider');
-
-    // Autoplay first track when site loads
-    window.addEventListener('load', () => {
-      tracks[0].style.display = 'block';
-      tracks[0].src = tracks[0].src + "&autoplay=1"; // force autoplay
-      setTimeout(() => {
-        try { tracks[0].contentWindow.postMessage('play', '*'); } catch(e) {}
-      }, 800);
-    });
-
-    function switchTrack(newIndex) {
-      tracks.forEach((t, i) => {
-        t.style.display = i === newIndex ? 'block' : 'none';
-      });
-      currentTrack = newIndex;
-    }
-
-    playBtn.addEventListener('click', () => {
-      try {
-        tracks[currentTrack].contentWindow.postMessage('play', '*');
-      } catch(e) {}
-    });
-
-    nextBtn.addEventListener('click', () => {
-      let next = (currentTrack + 1) % tracks.length;
-      switchTrack(next);
-    });
-
-    stopBtn.addEventListener('click', () => {
-      try {
-        tracks[currentTrack].contentWindow.postMessage('pause', '*');
-      } catch(e) {}
-    });
-
     volumeSlider.addEventListener('input', () => {
       const vol = volumeSlider.value;
-      tracks.forEach(track => {
-        try {
-          track.contentWindow.postMessage({volume: vol}, '*');
-        } catch(e) {}
-      });
+      const iframe = document.getElementById('spotifyPlaylist');
+      try { iframe.contentWindow.postMessage({volume: vol}, '*'); } catch(e) {}
     });
   </script>
 </body>
