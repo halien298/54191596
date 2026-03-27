@@ -57,7 +57,6 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>Idiot's Playground</title>
-  <!-- New website icon - cropped to block style -->
   <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
@@ -113,7 +112,7 @@ app.get('/', (req, res) => {
       text-shadow: 0 0 10px ${isFsociety ? '#00ff41' : '#aa44ff'};
     }
 
-    /* Center Area - Discord + YouTube + Cropped Icon */
+    /* Center Content */
     .center-content {
       position: absolute;
       top: 50%;
@@ -199,9 +198,9 @@ app.get('/', (req, res) => {
   </div>
   ` : ''}
 
-  <!-- Center Content: Cropped Icon + Discord + YouTube -->
+  <!-- Center Content: Icon + Links -->
   <div class="center-content">
-    <img src="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412" 
+    <img src="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412"
          class="main-icon" alt="Idiot's Playground">
     
     <div class="links">
@@ -211,7 +210,7 @@ app.get('/', (req, res) => {
   </div>
 
   ${!isFsociety ? `
-  <!-- Spotify Playlist - top left -->
+  <!-- Spotify Playlist - top left (normal mode) -->
   <div style="position: fixed; top: 95px; left: 20px; z-index: 50; width: 380px;">
     <iframe src="https://open.spotify.com/embed/playlist/12sFokgtLMlhcYVVbLFoqP?utm_source=generator" 
             width="100%" height="380" frameBorder="0" 
@@ -219,11 +218,13 @@ app.get('/', (req, res) => {
     </iframe>
   </div>
   ` : `
-  <!-- fsociety YouTube background music -->
+  <!-- fsociety Spotify track - Society (autoplay) -->
   <div style="display:none;">
-    <iframe id="ytPlayer" width="0" height="0" 
-            src="https://www.youtube.com/watch?v=0lD-aNuvDhA" 
-            frameborder="0" allow="autoplay; encrypted-media"></iframe>
+    <iframe id="societyPlayer" 
+            src="https://open.spotify.com/embed/track/5NLdlIggmKj4G7RB6l8Tm1?utm_source=generator" 
+            width="0" height="0" frameBorder="0" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
   </div>
   `}
 
@@ -236,7 +237,7 @@ app.get('/', (req, res) => {
     updateTime();
 
     ${!isFsociety ? `
-    // Radiation lines only in normal mode
+    // Radiation lines (normal mode)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
