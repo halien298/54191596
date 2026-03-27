@@ -222,7 +222,7 @@ app.get('/', (req, res) => {
   <!-- fsociety YouTube background music -->
   <div style="display:none;">
     <iframe id="ytPlayer" width="0" height="0" 
-            src="https://www.youtube.com/embed/5NLdlIggmKj4G7RB6l8Tm1?autoplay=1&loop=1&playlist=5NLdlIggmKj4G7RB6l8Tm1&controls=0&modestbranding=1" 
+            src="https://www.youtube.com/watch?v=0lD-aNuvDhA" 
             frameborder="0" allow="autoplay; encrypted-media"></iframe>
   </div>
   `}
