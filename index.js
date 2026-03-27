@@ -69,7 +69,6 @@ app.get('/', (req, res) => {
       position: relative;
     }
 
-    /* Vaporwave Background */
     .bg-grid {
       position: absolute;
       inset: 0;
@@ -94,7 +93,6 @@ app.get('/', (req, res) => {
       100% { opacity: 1; }
     }
 
-    /* Top Right Key */
     .top-key {
       position: fixed;
       top: 20px;
@@ -110,7 +108,6 @@ app.get('/', (req, res) => {
       text-shadow: 0 0 10px #ff00ff;
     }
 
-    /* Center Box */
     .box {
       position: absolute;
       top: 50%;
@@ -146,18 +143,14 @@ app.get('/', (req, res) => {
       opacity: 0.9;
     }
 
-    /* Radiation Particle Canvas */
     #particleCanvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 3;
       pointer-events: none;
     }
 
-    /* Spotify Players */
     .spotify-container {
       margin-top: 25px;
       display: flex;
@@ -175,7 +168,6 @@ app.get('/', (req, res) => {
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 0 20px rgba(30, 215, 96, 0.6);
-      opacity: 0.95;
     }
 
     .discord-btn {
@@ -210,14 +202,10 @@ app.get('/', (req, res) => {
 
   <div class="bg-grid"></div>
   <div class="sunset"></div>
-  
-  <!-- Radiation Particle Canvas (dots + lines that follow cursor and react) -->
   <canvas id="particleCanvas"></canvas>
 
-  <!-- Top Right Key -->
   <div class="top-key" id="topKey">${currentKey}</div>
 
-  <!-- Discord Button -->
   <a class="discord-btn" href="https://discord.gg/AAnmrCTRk6" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord">
   </a>
@@ -227,39 +215,25 @@ app.get('/', (req, res) => {
     <div class="time" id="currentTime">Time: --:--:--</div>
     <div class="note">Key changes every minute • Music starts automatically</div>
 
-    <!-- Spotify Players - Music plays on visit + more songs added -->
     <div class="spotify-container">
-      <!-- Main track - auto plays on visit -->
       <div class="spotify-main">
         <iframe style="border-radius:12px" 
                 src="https://open.spotify.com/embed/track/7LKfKpO56W1l3AUbfiwAeF?utm_source=generator" 
-                width="100%" 
-                height="152" 
-                frameBorder="0" 
-                allowfullscreen="" 
+                width="100%" height="152" frameBorder="0" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
         </iframe>
       </div>
-
-      <!-- Additional songs (more tracks added) -->
       <div class="spotify-mini">
         <iframe style="border-radius:12px" 
                 src="https://open.spotify.com/embed/track/6kexauPCWYPmDtmHzDf3Hw?utm_source=generator" 
-                width="100%" 
-                height="80" 
-                frameBorder="0" 
-                allowfullscreen="" 
+                width="100%" height="80" frameBorder="0" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
         </iframe>
       </div>
-
       <div class="spotify-mini">
         <iframe style="border-radius:12px" 
                 src="https://open.spotify.com/embed/track/2ZuMOcabaMzyXPPjFoYQGe?utm_source=generator" 
-                width="100%" 
-                height="80" 
-                frameBorder="0" 
-                allowfullscreen="" 
+                width="100%" height="80" frameBorder="0" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
         </iframe>
       </div>
@@ -267,22 +241,20 @@ app.get('/', (req, res) => {
   </div>
 
   <script>
-    // Live time
+    // Live clock
     function updateTime() {
       const now = new Date();
-      document.getElementById("currentTime").innerText = 
-        "Time: " + now.toLocaleTimeString('en-US', { hour12: false });
+      document.getElementById("currentTime").innerText = "Time: " + now.toLocaleTimeString('en-US', { hour12: false });
     }
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Radiation environment particle system (dots + glowing lines that follow cursor)
+    // Radiation particle system (dots + connecting lines that follow cursor)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
-    
     let particles = [];
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let intensity = 1; // for music-sync pulse effect
+    let intensity = 1;
 
     class Particle {
       constructor(x, y) {
@@ -314,7 +286,6 @@ app.get('/', (req, res) => {
       }
     }
 
-    // Resize canvas
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -322,27 +293,23 @@ app.get('/', (req, res) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Mouse movement - spawn radiation particles + lines
     document.addEventListener('mousemove', (e) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-      
-      // Spawn many particles at cursor for "following" effect
       for (let i = 0; i < 7; i++) {
         particles.push(new Particle(mouse.x, mouse.y));
       }
     });
 
-    // Connect particles with glowing lines (radiation network)
-    function connect() {
+    function connectParticles() {
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const distance = Math.hypot(dx, dy);
-          
           if (distance < 155) {
-            ctx.strokeStyle = `rgba(0, 255, 255, ${(1 - distance / 155) * 0.9})`;
+            const alpha = (1 - distance / 155) * 0.9;
+            ctx.strokeStyle = 'rgba(0, 255, 255, ' + alpha + ')';
             ctx.lineWidth = 1.8 * intensity;
             ctx.shadowBlur = 18 * intensity;
             ctx.shadowColor = '#00ffff';
@@ -355,47 +322,40 @@ app.get('/', (req, res) => {
       }
     }
 
-    // Fake music sync pulse (lines and glow get stronger on beat)
+    // Fake music beat pulse
     setInterval(() => {
       intensity = 2.2;
-      setTimeout(() => { intensity = 1; }, 180);
-    }, 420); // ~142 BPM feel - matches the energy of the tracks
+      setTimeout(() => intensity = 1, 180);
+    }, 420);
 
-    // Animation loop
     function animate() {
-      // Soft trail fade for radiation glow
       ctx.fillStyle = 'rgba(26, 0, 51, 0.12)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Update & draw particles
       for (let i = particles.length - 1; i >= 0; i--) {
         particles[i].update();
         particles[i].draw();
         if (particles[i].life <= 0) particles.splice(i, 1);
       }
 
-      connect();
+      connectParticles();
 
-      // Extra random radiation particles for "more and more" effect
       if (Math.random() < 0.35) {
-        const rx = Math.random() * canvas.width;
-        const ry = Math.random() * canvas.height;
-        particles.push(new Particle(rx, ry));
+        particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
       }
 
       requestAnimationFrame(animate);
     }
     animate();
 
-    // Auto-refresh key display
+    // Auto refresh key
     setInterval(() => {
       fetch('/key')
         .then(res => res.json())
         .then(data => {
           document.getElementById('topKey').textContent = data.key;
           document.getElementById('centerKey').textContent = data.key;
-        })
-        .catch(() => {});
+        });
     }, 5000);
   </script>
 </body>
@@ -405,6 +365,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Idiot's Playground running on port ${PORT}`);
+  console.log("Idiot's Playground running on port " + PORT);
   scheduleKeyRotation();
 });
