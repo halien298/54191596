@@ -57,6 +57,7 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>Idiot's Playground</title>
+  <!-- New website icon - cropped to block style -->
   <link rel="icon" type="image/png" href="https://i.pinimg.com/736x/8b/b8/87/8bb887efbcf379cff28271ea480e705f.jpg">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
@@ -72,7 +73,7 @@ app.get('/', (req, res) => {
       position: relative;
     }
 
-    /* Normal mode - dark vaporwave */
+    /* Normal mode */
     ${!isFsociety ? `
     .bg-grid {
       position: absolute; inset: 0;
@@ -82,7 +83,7 @@ app.get('/', (req, res) => {
       z-index: 1;
     }
     ` : `
-    /* fsociety mode - only fsociety effects, black background */
+    /* fsociety mode */
     body { animation: glitch 0.6s infinite alternate; }
     @keyframes glitch {
       0% { transform: translate(0); }
@@ -100,8 +101,65 @@ app.get('/', (req, res) => {
     .terminal { position: absolute; top: 20px; left: 20px; color: #00ff41; font-size: 1.1rem; }
     `}
 
+    /* Top Center Time */
+    .time-top {
+      position: fixed;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.1rem;
+      color: ${isFsociety ? '#00ff41' : '#aaccff'};
+      z-index: 100;
+      text-shadow: 0 0 10px ${isFsociety ? '#00ff41' : '#aa44ff'};
+    }
+
+    /* Center Area - Discord + YouTube + Cropped Icon */
+    .center-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+    }
+
+    .main-icon {
+      width: 260px;
+      height: 260px;
+      object-fit: cover;
+      object-position: center 30%;
+      border: 6px solid ${isFsociety ? '#00ff41' : '#aa44ff'};
+      border-radius: 12px;
+      box-shadow: 0 0 40px ${isFsociety ? '#00ff41' : '#aa44ff'};
+      margin-bottom: 30px;
+    }
+
+    .links {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .link-btn {
+      background: rgba(0,0,0,0.8);
+      color: ${isFsociety ? '#00ff41' : '#ccddff'};
+      padding: 14px 32px;
+      border: 3px solid ${isFsociety ? '#00ff41' : '#aa44ff'};
+      border-radius: 12px;
+      font-size: 1.5rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px ${isFsociety ? '#00ff41' : '#aa44ff'};
+    }
+
+    .link-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 35px ${isFsociety ? '#00ff41' : '#ff00ff'};
+    }
+
+    /* Top Right Key */
     .top-key {
-      position: fixed; top: 20px; right: 20px;
+      position: fixed; top: 25px; right: 25px;
       background: rgba(0,0,0,0.85); padding: 12px 24px;
       border: 3px solid ${isFsociety ? '#00ff41' : '#aa44ff'};
       border-radius: 8px; font-size: 1.8rem; letter-spacing: 4px;
@@ -111,28 +169,10 @@ app.get('/', (req, res) => {
 
     .top-key-label { font-size: 1.1rem; color: ${isFsociety ? '#00ff41' : '#88aaff'}; }
 
-    /* Center - only time */
-    .box {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      text-align: center; padding: 25px 45px;
-      background: rgba(10,5,40,0.9); border: 3px solid ${isFsociety ? '#00ff41' : '#aa44ff'};
-      border-radius: 12px; z-index: 10;
-    }
-
-    .time { font-size: 1.9rem; color: ${isFsociety ? '#00ff41' : '#aaccff'}; margin: 0; }
-
-    /* Radiation lines - only in normal mode */
+    /* Radiation lines - normal mode only */
     ${!isFsociety ? `
     #particleCanvas {
       position: absolute; top:0; left:0; width:100%; height:100%; z-index:3; pointer-events:none; opacity:0.8;
-    }
-    ` : ''}
-
-    /* Playlist moved to top left (normal mode only) */
-    ${!isFsociety ? `
-    .playlist-container {
-      position: fixed; top: 95px; left: 20px; z-index: 50;
-      width: 380px;
     }
     ` : ''}
   </style>
@@ -142,6 +182,9 @@ app.get('/', (req, res) => {
   ${!isFsociety ? '<div class="bg-grid"></div>' : '<div class="scanline"></div>'}
   ${!isFsociety ? '<canvas id="particleCanvas"></canvas>' : ''}
 
+  <!-- Top Center Time -->
+  <div class="time-top" id="currentTime">Time: --:--:--</div>
+
   <!-- Top Right Key -->
   <div class="top-key" id="topKey">
     <span class="top-key-label">KEY:</span>
@@ -149,7 +192,6 @@ app.get('/', (req, res) => {
   </div>
 
   ${isFsociety ? `
-  <!-- fsociety terminal text -->
   <div class="terminal">
     fsociety00<br>
     INITIATING SYSTEM COMPROMISE...<br>
@@ -157,21 +199,27 @@ app.get('/', (req, res) => {
   </div>
   ` : ''}
 
-  <!-- Center Time -->
-  <div class="box">
-    <div class="time" id="currentTime">Time: --:--:--</div>
+  <!-- Center Content: Cropped Icon + Discord + YouTube -->
+  <div class="center-content">
+    <img src="https://i.pinimg.com/736x/8b/b8/87/8bb887efbcf379cff28271ea480e705f.jpg" 
+         class="main-icon" alt="Idiot's Playground">
+    
+    <div class="links">
+      <a href="https://discord.gg/AAnmrCTRk6" target="_blank" class="link-btn">DISCORD</a>
+      <a href="https://www.youtube.com/@ladapagalaga" target="_blank" class="link-btn">YOUTUBE</a>
+    </div>
   </div>
 
   ${!isFsociety ? `
-  <!-- Playlist moved to top left -->
-  <div class="playlist-container">
+  <!-- Spotify Playlist - top left -->
+  <div style="position: fixed; top: 95px; left: 20px; z-index: 50; width: 380px;">
     <iframe src="https://open.spotify.com/embed/playlist/12sFokgtLMlhcYVVbLFoqP?utm_source=generator" 
             width="100%" height="380" frameBorder="0" 
             allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture">
     </iframe>
   </div>
   ` : `
-  <!-- fsociety background YouTube music (Society track) - hidden player -->
+  <!-- fsociety YouTube background music -->
   <div style="display:none;">
     <iframe id="ytPlayer" width="0" height="0" 
             src="https://www.youtube.com/embed/5NLdlIggmKj4G7RB6l8Tm1?autoplay=1&loop=1&playlist=5NLdlIggmKj4G7RB6l8Tm1&controls=0&modestbranding=1" 
@@ -188,7 +236,7 @@ app.get('/', (req, res) => {
     updateTime();
 
     ${!isFsociety ? `
-    // Radiation lines (normal mode only)
+    // Radiation lines only in normal mode
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -242,7 +290,6 @@ app.get('/', (req, res) => {
     }
     animate();
 
-    // Beat pulse
     setInterval(() => {
       intensity = 2.5;
       setTimeout(() => intensity = 1, 140);
