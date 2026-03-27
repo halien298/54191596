@@ -94,7 +94,7 @@ app.get('/', (req, res) => {
       100% { opacity: 0.85; }
     }
 
-    /* Top Right Key */
+    /* Top Right Key - now with key on the left side */
     .top-key {
       position: fixed;
       top: 20px;
@@ -108,9 +108,18 @@ app.get('/', (req, res) => {
       z-index: 100;
       box-shadow: 0 0 20px #aa44ff;
       text-shadow: 0 0 10px #aa44ff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    /* Center Box */
+    .top-key-label {
+      font-size: 1.1rem;
+      color: #88aaff;
+      opacity: 0.9;
+    }
+
+    /* Center Box - key removed from center */
     .box {
       position: absolute;
       top: 50%;
@@ -126,14 +135,6 @@ app.get('/', (req, res) => {
       min-width: 420px;
     }
 
-    .key-center {
-      font-size: 3.2rem;
-      letter-spacing: 8px;
-      font-weight: bold;
-      text-shadow: 0 0 15px #aa44ff, 0 0 30px #7733cc;
-      margin-bottom: 15px;
-    }
-
     .time {
       font-size: 1.4rem;
       color: #aaccff;
@@ -146,7 +147,7 @@ app.get('/', (req, res) => {
       opacity: 0.9;
     }
 
-    /* Simple non-laggy vaporwave particles (no cursor follow) */
+    /* Radiation effect - particles + lines (no cursor follow, music synced) */
     #particleCanvas {
       position: absolute;
       top: 0;
@@ -155,7 +156,7 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 3;
       pointer-events: none;
-      opacity: 0.75;
+      opacity: 0.85;
     }
 
     /* Spotify Players */
@@ -178,31 +179,33 @@ app.get('/', (req, res) => {
       box-shadow: 0 0 18px rgba(30, 215, 96, 0.5);
     }
 
+    /* Bigger & clearer Discord button */
     .discord-btn {
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 60px;
-      height: 60px;
+      width: 68px;
+      height: 68px;
       background: linear-gradient(135deg, #7289da, #5865f2);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      box-shadow: 0 0 25px #7289da;
+      box-shadow: 0 0 30px #7289da;
       transition: all 0.3s;
       z-index: 100;
     }
 
     .discord-btn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 0 35px #99aaff;
+      transform: scale(1.15);
+      box-shadow: 0 0 45px #99aaff;
     }
 
     .discord-btn img {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
+      filter: brightness(1.1);
     }
   </style>
 </head>
@@ -212,16 +215,20 @@ app.get('/', (req, res) => {
   <div class="sunset"></div>
   <canvas id="particleCanvas"></canvas>
 
-  <div class="top-key" id="topKey">${currentKey}</div>
+  <!-- Top Right Key with label on left -->
+  <div class="top-key" id="topKey">
+    <span class="top-key-label">KEY:</span>
+    ${currentKey}
+  </div>
 
+  <!-- Bigger Discord Button -->
   <a class="discord-btn" href="https://discord.gg/AAnmrCTRk6" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord">
   </a>
 
   <div class="box">
-    <div class="key-center" id="centerKey">${currentKey}</div>
     <div class="time" id="currentTime">Time: --:--:--</div>
-    <div class="note">Key changes every minute • Music starts automatically</div>
+    <div class="note">Key changes every minute • Music starts on load</div>
 
     <div class="spotify-container">
       <div class="spotify-main">
@@ -258,11 +265,12 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Simple smooth vaporwave particles (no cursor following - much less lag)
+    // Radiation effect - particles + connecting lines (music synced, no cursor)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
-    let intensity = 1;
+    let intensity = 1.0;
+    let hueShift = 200; // starts in blue-purple range
 
     class Particle {
       constructor() {
@@ -270,26 +278,26 @@ app.get('/', (req, res) => {
       }
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 1.2;
-        this.vy = (Math.random() - 0.5) * 1.2;
-        this.size = Math.random() * 3.5 + 1.5;
-        this.life = 180 + Math.random() * 120;
-        this.color = Math.random() > 0.5 ? '#88aaff' : '#cc77ff';
+        this.y = Math.random() * canvas.height * 0.7;
+        this.vx = (Math.random() - 0.5) * 1.6;
+        this.vy = (Math.random() - 0.5) * 1.4 + 0.6;
+        this.size = Math.random() * 4 + 2;
+        this.life = 140 + Math.random() * 80;
       }
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-        this.life -= 1;
-        if (this.life <= 0) this.reset();
+        this.vx *= 0.985;
+        this.vy *= 0.985;
+        this.life -= 1.1;
+        if (this.life <= 0 || this.y > canvas.height) this.reset();
       }
       draw() {
-        ctx.shadowBlur = 12 * intensity;
-        ctx.shadowColor = this.color;
-        ctx.fillStyle = this.color;
-        ctx.globalAlpha = (this.life / 250) * 0.7;
+        const color = \`hsl(\${hueShift}, 100%, 75%)\`;
+        ctx.shadowBlur = 22 * intensity;
+        ctx.shadowColor = color;
+        ctx.fillStyle = color;
+        ctx.globalAlpha = (this.life / 200) * 0.85;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -304,25 +312,59 @@ app.get('/', (req, res) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Create initial particles
-    for (let i = 0; i < 65; i++) {
+    // Spawn radiation particles
+    for (let i = 0; i < 85; i++) {
       particles.push(new Particle());
     }
 
-    // Gentle beat pulse
+    function connectRadiation() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 140) {
+            const alpha = (1 - dist / 140) * 0.55 * intensity;
+            ctx.strokeStyle = \`rgba(120, 180, 255, \${alpha})\`;
+            ctx.lineWidth = 1.4 * intensity;
+            ctx.shadowBlur = 15 * intensity;
+            ctx.shadowColor = '#88ccff';
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Music-synced color & intensity pulse (radiation reacts to beat)
+    let beatInterval = 460; // tuned to the tracks
     setInterval(() => {
-      intensity = 1.8;
-      setTimeout(() => { intensity = 1; }, 220);
-    }, 480);
+      intensity = 2.4;
+      hueShift = 260; // shift toward magenta/purple on beat
+      setTimeout(() => {
+        intensity = 1.0;
+        hueShift = 200; // back to blue-purple
+      }, 160);
+    }, beatInterval);
 
     function animate() {
-      // Very soft fade for smooth vaporwave glow
-      ctx.fillStyle = 'rgba(10, 0, 30, 0.085)';
+      ctx.fillStyle = 'rgba(10, 0, 30, 0.11)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      for (let i = 0; i < particles.length; i++) {
+      for (let i = particles.length - 1; i >= 0; i--) {
         particles[i].update();
         particles[i].draw();
+      }
+
+      connectRadiation();
+
+      // Occasional extra radiation burst
+      if (Math.random() < 0.28) {
+        for (let i = 0; i < 6; i++) {
+          particles.push(new Particle());
+        }
       }
 
       requestAnimationFrame(animate);
@@ -334,8 +376,9 @@ app.get('/', (req, res) => {
       fetch('/key')
         .then(res => res.json())
         .then(data => {
-          document.getElementById('topKey').textContent = data.key;
-          document.getElementById('centerKey').textContent = data.key;
+          const keyEl = document.getElementById('topKey');
+          // Keep the label and replace only the key part
+          keyEl.innerHTML = '<span class="top-key-label">KEY:</span> ' + data.key;
         })
         .catch(() => {});
     }, 5000);
