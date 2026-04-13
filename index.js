@@ -1,4 +1,4 @@
-// index.js (FIXED - pure black background + working volume control)
+// index.js
 const express = require('express');
 const crypto = require('crypto');
 const app = express();
@@ -76,7 +76,7 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 1;
       pointer-events: none;
-      background: rgb(0, 0, 0); /* PURE BLACK */
+      background: rgb(0, 0, 0); /* SPLIT - pure black canvas background */
     }
 
     .time-top {
@@ -156,32 +156,6 @@ app.get('/', (req, res) => {
       font-size: 1.15rem;
       color: #aaccff;
     }
-
-    .volume-control {
-      position: fixed;
-      bottom: 35px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(0,0,0,0.8);
-      padding: 10px 20px;
-      border-radius: 12px;
-      border: 2px solid #ffffff;
-    }
-
-    .volume-label {
-      color: #aaccff;
-      font-size: 1.3rem;
-    }
-
-    .volume-slider {
-      width: 220px;
-      accent-color: #ffffff;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -207,7 +181,7 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
-  <!-- Background Music (FIXED with enablejsapi) -->
+  <!-- Background Music (kept, no volume control) -->
   <div style="display:none;">
     <iframe id="bgMusic"
             width="0" height="0"
@@ -215,12 +189,6 @@ app.get('/', (req, res) => {
             frameborder="0"
             allow="autoplay; encrypted-media">
     </iframe>
-  </div>
-
-  <!-- Volume Control -->
-  <div class="volume-control">
-    <span class="volume-label">VOLUME</span>
-    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="65">
   </div>
 
   <script>
@@ -231,7 +199,7 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Particle canvas - PURE BLACK background + white lines with glow
+    // Particle canvas - PURE BLACK background + white lines with glow ONLY (split)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -254,8 +222,8 @@ app.get('/', (req, res) => {
     }
 
     function animate() {
-      // STRONGER BLACK FADE → no more white trails
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      // STRONG BLACK FADE - no white trails, background stays 100% black
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
@@ -300,29 +268,12 @@ app.get('/', (req, res) => {
       });
     }, 5000);
 
-    // VOLUME CONTROL (now works with enablejsapi=1)
-    const volumeSlider = document.getElementById('volumeSlider');
-    const musicFrame = document.getElementById('bgMusic');
-
-    volumeSlider.addEventListener('input', () => {
-      const vol = parseInt(volumeSlider.value);
-      try {
-        musicFrame.contentWindow.postMessage({
-          event: 'command',
-          func: 'setVolume',
-          args: [vol]
-        }, '*');
-      } catch(e) {}
-    });
-
-    // Force music start + initial volume
+    // Background music auto-start (volume control removed)
     window.addEventListener('load', () => {
       setTimeout(() => {
         try {
-          const player = musicFrame.contentWindow;
+          const player = document.getElementById('bgMusic').contentWindow;
           player.postMessage({ event: 'command', func: 'playVideo' }, '*');
-          // Set initial volume to 65
-          player.postMessage({ event: 'command', func: 'setVolume', args: [65] }, '*');
         } catch(e) {}
       }, 1500);
     });
