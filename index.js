@@ -3,7 +3,6 @@ const express = require('express');
 const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 const KEY_LENGTH = 15;
 const CHARS = 'QWERTZUIOPASDFGHJKLYXCVBNMqwertzuiopasdfghjklyxcvbnm123456789@€Đđ-';
 
@@ -58,18 +57,15 @@ app.get('/', (req, res) => {
   <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
     body {
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      background: #000000; /* PURE BLACK */
+      background: rgb(0, 0, 0); /* PURE BLACK */
       font-family: "VT323", monospace;
       color: #ccddff;
       position: relative;
     }
-
-    /* White radioactive lines */
     #particleCanvas {
       position: absolute;
       top: 0;
@@ -79,9 +75,8 @@ app.get('/', (req, res) => {
       z-index: 2;
       pointer-events: none;
       opacity: 0.92;
+      background: rgb(0, 0, 0);
     }
-
-    /* Top Center Time */
     .time-top {
       position: fixed;
       top: 28px;
@@ -92,8 +87,6 @@ app.get('/', (req, res) => {
       z-index: 100;
       text-shadow: 0 0 12px #ffffff;
     }
-
-    /* Center Content */
     .center-content {
       position: absolute;
       top: 50%;
@@ -102,7 +95,6 @@ app.get('/', (req, res) => {
       text-align: center;
       z-index: 10;
     }
-
     .main-icon {
       width: 290px;
       height: 290px;
@@ -114,13 +106,11 @@ app.get('/', (req, res) => {
       margin-bottom: 38px;
       image-rendering: crisp-edges;
     }
-
     .links {
       display: flex;
       gap: 48px;
       justify-content: center;
     }
-
     .link-btn {
       background: rgba(20,20,20,0.95);
       color: #ccddff;
@@ -132,14 +122,11 @@ app.get('/', (req, res) => {
       transition: all 0.3s;
       box-shadow: 0 0 22px #ffffff;
     }
-
     .link-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 0 45px #ffffff;
       color: #ffffff;
     }
-
-    /* Top Right Key */
     .top-key {
       position: fixed;
       top: 28px;
@@ -156,13 +143,10 @@ app.get('/', (req, res) => {
       align-items: center;
       gap: 14px;
     }
-
     .top-key-label {
       font-size: 1.15rem;
       color: #aaccff;
     }
-
-    /* Volume Control */
     .volume-control {
       position: fixed;
       bottom: 35px;
@@ -177,12 +161,10 @@ app.get('/', (req, res) => {
       border-radius: 12px;
       border: 2px solid #ffffff;
     }
-
     .volume-label {
       color: #aaccff;
       font-size: 1.3rem;
     }
-
     .volume-slider {
       width: 220px;
       accent-color: #ffffff;
@@ -191,7 +173,6 @@ app.get('/', (req, res) => {
   </style>
 </head>
 <body>
-
   <canvas id="particleCanvas"></canvas>
 
   <!-- Top Center Time -->
@@ -205,9 +186,9 @@ app.get('/', (req, res) => {
 
   <!-- Center Content -->
   <div class="center-content">
-    <img src="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412" 
+    <img src="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412"
          class="main-icon" alt="Idiot's Playground">
-    
+   
     <div class="links">
       <a href="https://discord.gg/AAnmrCTRk6" target="_blank" class="link-btn">DISCORD</a>
       <a href="https://www.youtube.com/@ladapagalaga" target="_blank" class="link-btn">YOUTUBE</a>
@@ -216,10 +197,10 @@ app.get('/', (req, res) => {
 
   <!-- Background Music -->
   <div style="display:none;">
-    <iframe id="bgMusic" 
-            width="0" height="0" 
-            src="https://www.youtube.com/embed/oK3gZnDJnx0?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1" 
-            frameborder="0" 
+    <iframe id="bgMusic"
+            width="0" height="0"
+            src="https://www.youtube.com/embed/oK3gZnDJnx0?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1&rel=0"
+            frameborder="0"
             allow="autoplay; encrypted-media">
     </iframe>
   </div>
@@ -238,7 +219,7 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // White radioactive lines
+    // Particle lines
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -261,7 +242,7 @@ app.get('/', (req, res) => {
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';   // pure black fade
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
@@ -305,7 +286,7 @@ app.get('/', (req, res) => {
       });
     }, 5000);
 
-    // Volume control for background music
+    // Volume control
     const volumeSlider = document.getElementById('volumeSlider');
     const musicFrame = document.getElementById('bgMusic');
 
