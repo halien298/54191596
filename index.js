@@ -54,9 +54,10 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>Idiot's Playground</title>
-  <link rel="icon" type="image/png" href="https://github.com/halien298/54191596/blob/main/9w0A2.jpg?raw=true">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/9w0A2.jpg">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    
     body {
       margin: 0;
       height: 100vh;
@@ -66,17 +67,19 @@ app.get('/', (req, res) => {
       color: #ccddff;
       position: relative;
     }
+
     #particleCanvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 2;
+      z-index: 1;
       pointer-events: none;
-      opacity: 0.92;
-      background: rgb(0, 0, 0);
+      background: rgb(0, 0, 0); /* čisté čierne pozadie pre canvas */
     }
+
+    /* Top Center Time */
     .time-top {
       position: fixed;
       top: 28px;
@@ -87,6 +90,8 @@ app.get('/', (req, res) => {
       z-index: 100;
       text-shadow: 0 0 12px #ffffff;
     }
+
+    /* Center Content */
     .center-content {
       position: absolute;
       top: 50%;
@@ -95,6 +100,7 @@ app.get('/', (req, res) => {
       text-align: center;
       z-index: 10;
     }
+
     .main-icon {
       width: 290px;
       height: 290px;
@@ -106,11 +112,13 @@ app.get('/', (req, res) => {
       margin-bottom: 38px;
       image-rendering: crisp-edges;
     }
+
     .links {
       display: flex;
       gap: 48px;
       justify-content: center;
     }
+
     .link-btn {
       background: rgba(20,20,20,0.95);
       color: #ccddff;
@@ -122,11 +130,14 @@ app.get('/', (req, res) => {
       transition: all 0.3s;
       box-shadow: 0 0 22px #ffffff;
     }
+
     .link-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 0 45px #ffffff;
       color: #ffffff;
     }
+
+    /* Top Right Key */
     .top-key {
       position: fixed;
       top: 28px;
@@ -143,10 +154,13 @@ app.get('/', (req, res) => {
       align-items: center;
       gap: 14px;
     }
+
     .top-key-label {
       font-size: 1.15rem;
       color: #aaccff;
     }
+
+    /* Volume Control */
     .volume-control {
       position: fixed;
       bottom: 35px;
@@ -161,10 +175,12 @@ app.get('/', (req, res) => {
       border-radius: 12px;
       border: 2px solid #ffffff;
     }
+
     .volume-label {
       color: #aaccff;
       font-size: 1.3rem;
     }
+
     .volume-slider {
       width: 220px;
       accent-color: #ffffff;
@@ -186,7 +202,7 @@ app.get('/', (req, res) => {
 
   <!-- Center Content -->
   <div class="center-content">
-    <img src="https://github.com/halien298/54191596/blob/main/9w0A2.jpg?raw=true"
+    <img src="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/9w0A2.jpg"
          class="main-icon" alt="Idiot's Playground">
    
     <div class="links">
@@ -219,7 +235,7 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Particle lines
+    // Particle canvas - white lines with glow on pure black background
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -242,7 +258,8 @@ app.get('/', (req, res) => {
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
+      // Pure black fade - no white contamination
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
@@ -258,10 +275,10 @@ app.get('/', (req, res) => {
           const dy = points[i].y - points[j].y;
           const dist = Math.hypot(dx, dy);
           if (dist < 195) {
-            const alpha = (1 - dist / 195) * 0.78 * intensity;
+            const alpha = (1 - dist / 195) * 0.85 * intensity;
             ctx.strokeStyle = \`rgba(255, 255, 255, \${alpha})\`;
-            ctx.lineWidth = 1.85 * intensity;
-            ctx.shadowBlur = 24 * intensity;
+            ctx.lineWidth = 1.9 * intensity;
+            ctx.shadowBlur = 28 * intensity;      // nice glow
             ctx.shadowColor = '#ffffff';
             ctx.beginPath();
             ctx.moveTo(points[i].x, points[i].y);
@@ -274,10 +291,11 @@ app.get('/', (req, res) => {
     }
     animate();
 
+    // Intensity pulse
     setInterval(() => {
-      intensity = 2.6;
-      setTimeout(() => intensity = 1.0, 170);
-    }, 530);
+      intensity = 2.8;
+      setTimeout(() => intensity = 1.0, 160);
+    }, 520);
 
     // Auto refresh key
     setInterval(() => {
