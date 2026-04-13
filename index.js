@@ -63,13 +63,13 @@ app.get('/', (req, res) => {
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      background: #0a0a0a; /* Very dark background */
+      background: #000000; /* PURE BLACK */
       font-family: "VT323", monospace;
       color: #ccddff;
       position: relative;
     }
 
-    /* White radioactive lines only */
+    /* White radioactive lines */
     #particleCanvas {
       position: absolute;
       top: 0;
@@ -161,6 +161,33 @@ app.get('/', (req, res) => {
       font-size: 1.15rem;
       color: #aaccff;
     }
+
+    /* Volume Control */
+    .volume-control {
+      position: fixed;
+      bottom: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0,0,0,0.8);
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 2px solid #ffffff;
+    }
+
+    .volume-label {
+      color: #aaccff;
+      font-size: 1.3rem;
+    }
+
+    .volume-slider {
+      width: 220px;
+      accent-color: #ffffff;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -187,6 +214,22 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
+  <!-- Background Music -->
+  <div style="display:none;">
+    <iframe id="bgMusic" 
+            width="0" height="0" 
+            src="https://www.youtube.com/embed/oK3gZnDJnx0?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media">
+    </iframe>
+  </div>
+
+  <!-- Volume Control -->
+  <div class="volume-control">
+    <span class="volume-label">VOLUME</span>
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="65">
+  </div>
+
   <script>
     // Live time
     function updateTime() {
@@ -195,7 +238,7 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // White radioactive lines only
+    // White radioactive lines
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -218,7 +261,7 @@ app.get('/', (req, res) => {
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(10, 10, 10, 0.14)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';   // pure black fade
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
@@ -250,7 +293,6 @@ app.get('/', (req, res) => {
     }
     animate();
 
-    // Soft pulse
     setInterval(() => {
       intensity = 2.6;
       setTimeout(() => intensity = 1.0, 170);
@@ -262,6 +304,30 @@ app.get('/', (req, res) => {
         document.getElementById('topKey').innerHTML = '<span class="top-key-label">KEY:</span> ' + d.key;
       });
     }, 5000);
+
+    // Volume control for background music
+    const volumeSlider = document.getElementById('volumeSlider');
+    const musicFrame = document.getElementById('bgMusic');
+
+    volumeSlider.addEventListener('input', () => {
+      const vol = parseInt(volumeSlider.value);
+      try {
+        musicFrame.contentWindow.postMessage({
+          event: 'command',
+          func: 'setVolume',
+          args: [vol]
+        }, '*');
+      } catch(e) {}
+    });
+
+    // Force music start
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        try {
+          musicFrame.contentWindow.postMessage({ event: 'command', func: 'playVideo' }, '*');
+        } catch(e) {}
+      }, 1200);
+    });
   </script>
 </body>
 </html>`;
