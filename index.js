@@ -1,4 +1,4 @@
-// index.js
+// index.js (FIXED - pure black background + working volume control)
 const express = require('express');
 const crypto = require('crypto');
 const app = express();
@@ -76,10 +76,9 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 1;
       pointer-events: none;
-      background: rgb(0, 0, 0); /* čisté čierne pozadie pre canvas */
+      background: rgb(0, 0, 0); /* PURE BLACK */
     }
 
-    /* Top Center Time */
     .time-top {
       position: fixed;
       top: 28px;
@@ -91,7 +90,6 @@ app.get('/', (req, res) => {
       text-shadow: 0 0 12px #ffffff;
     }
 
-    /* Center Content */
     .center-content {
       position: absolute;
       top: 50%;
@@ -137,7 +135,6 @@ app.get('/', (req, res) => {
       color: #ffffff;
     }
 
-    /* Top Right Key */
     .top-key {
       position: fixed;
       top: 28px;
@@ -160,7 +157,6 @@ app.get('/', (req, res) => {
       color: #aaccff;
     }
 
-    /* Volume Control */
     .volume-control {
       position: fixed;
       bottom: 35px;
@@ -211,11 +207,11 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
-  <!-- Background Music -->
+  <!-- Background Music (FIXED with enablejsapi) -->
   <div style="display:none;">
     <iframe id="bgMusic"
             width="0" height="0"
-            src="https://www.youtube.com/embed/oK3gZnDJnx0?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1&rel=0"
+            src="https://www.youtube.com/embed/oK3gZnDJnx0?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1&rel=0&enablejsapi=1"
             frameborder="0"
             allow="autoplay; encrypted-media">
     </iframe>
@@ -235,7 +231,7 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Particle canvas - white lines with glow on pure black background
+    // Particle canvas - PURE BLACK background + white lines with glow
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -258,8 +254,8 @@ app.get('/', (req, res) => {
     }
 
     function animate() {
-      // Pure black fade - no white contamination
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+      // STRONGER BLACK FADE → no more white trails
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
@@ -278,7 +274,7 @@ app.get('/', (req, res) => {
             const alpha = (1 - dist / 195) * 0.85 * intensity;
             ctx.strokeStyle = \`rgba(255, 255, 255, \${alpha})\`;
             ctx.lineWidth = 1.9 * intensity;
-            ctx.shadowBlur = 28 * intensity;      // nice glow
+            ctx.shadowBlur = 28 * intensity;
             ctx.shadowColor = '#ffffff';
             ctx.beginPath();
             ctx.moveTo(points[i].x, points[i].y);
@@ -291,7 +287,7 @@ app.get('/', (req, res) => {
     }
     animate();
 
-    // Intensity pulse
+    // Pulse effect
     setInterval(() => {
       intensity = 2.8;
       setTimeout(() => intensity = 1.0, 160);
@@ -304,7 +300,7 @@ app.get('/', (req, res) => {
       });
     }, 5000);
 
-    // Volume control
+    // VOLUME CONTROL (now works with enablejsapi=1)
     const volumeSlider = document.getElementById('volumeSlider');
     const musicFrame = document.getElementById('bgMusic');
 
@@ -319,13 +315,16 @@ app.get('/', (req, res) => {
       } catch(e) {}
     });
 
-    // Force music start
+    // Force music start + initial volume
     window.addEventListener('load', () => {
       setTimeout(() => {
         try {
-          musicFrame.contentWindow.postMessage({ event: 'command', func: 'playVideo' }, '*');
+          const player = musicFrame.contentWindow;
+          player.postMessage({ event: 'command', func: 'playVideo' }, '*');
+          // Set initial volume to 65
+          player.postMessage({ event: 'command', func: 'setVolume', args: [65] }, '*');
         } catch(e) {}
-      }, 1200);
+      }, 1500);
     });
   </script>
 </body>
