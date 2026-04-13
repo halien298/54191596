@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>Idiot's Playground</title>
-  <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412">
+  <link rel="icon" type="image/png" href="https://github.com/halien298/54191596/blob/main/9w0A2.jpg?raw=true">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
     body {
@@ -186,7 +186,7 @@ app.get('/', (req, res) => {
 
   <!-- Center Content -->
   <div class="center-content">
-    <img src="https://media.discordapp.net/attachments/1347659584868847688/1487075902205726921/image.png?ex=69c7d2db&is=69c6815b&hm=b50ac181d7dd30ba50f664c8cb390bd91a5ae914bd7dc038eebda35a8a16f87f&=&format=webp&quality=lossless&width=415&height=412"
+    <img src="https://github.com/halien298/54191596/blob/main/9w0A2.jpg?raw=true"
          class="main-icon" alt="Idiot's Playground">
    
     <div class="links">
