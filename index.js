@@ -172,7 +172,7 @@ app.get('/', (req, res) => {
 
   <!-- Center Content -->
   <div class="center-content">
-    <img src="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/9w0A2.jpg"
+    <img src="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/b4fdce5dc0c1c3bd7dda0fca077b0dfb158698de_full.jpg"
          class="main-icon" alt="Idiot's Playground">
    
     <div class="links">
