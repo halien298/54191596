@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
       background-size: 60px 60px;
       pointer-events: none;
       z-index: 2;
-      animation: scanline 6s linear infinite;
+      animation: scanline 8s linear infinite;
     }
 
     @keyframes scanline {
@@ -197,6 +197,11 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
+  <!-- Hidden Background Music -->
+  <iframe id="bgMusic" width="0" height="0" 
+          src="https://www.youtube.com/embed/PCG1W1VpIqo?autoplay=1&loop=1&playlist=PCG1W1VpIqo&controls=0&modestbranding=1&rel=0" 
+          frameborder="0" allow="autoplay; encrypted-media" style="display:none;"></iframe>
+
   <script>
     function updateTime() {
       document.getElementById("currentTime").innerText = "Time: " + new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -214,7 +219,7 @@ app.get('/', (req, res) => {
     setInterval(fetchKey, 4000);
     fetchKey();
 
-    // Optimized Particle System
+    // Optimized Particles
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d', { alpha: true });
     let points = [];
@@ -227,7 +232,6 @@ app.get('/', (req, res) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Fewer particles + better performance
     for (let i = 0; i < 65; i++) {
       points.push({
         x: Math.random() * canvas.width,
@@ -255,9 +259,8 @@ app.get('/', (req, res) => {
         ctx.fillRect(p.x, p.y, p.size, p.size);
       }
 
-      // Optimized connections (skip some pairs)
-      for (let i = 0; i < points.length; i += 1) {
-        for (let j = i + 1; j < points.length; j += 1) {
+      for (let i = 0; i < points.length; i++) {
+        for (let j = i + 1; j < points.length; j++) {
           const dx = points[i].x - points[j].x;
           const dy = points[i].y - points[j].y;
           const dist = Math.hypot(dx, dy);
@@ -278,11 +281,20 @@ app.get('/', (req, res) => {
     }
     animate();
 
-    // Pulse effect
     setInterval(() => {
       intensity = 2.8;
       setTimeout(() => intensity = 1.0, 180);
     }, 750);
+
+    // Background Music (hidden)
+    const music = document.getElementById('bgMusic');
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        try {
+          music.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        } catch(e) {}
+      }, 1500);
+    });
   </script>
 </body>
 </html>`;
