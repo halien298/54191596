@@ -1,4 +1,54 @@
-<!DOCTYPE html>
+// index.js
+const express = require('express');
+const crypto = require('crypto');
+const app = express();
+const PORT = process.env.PORT || 3000;
+const KEY_LENGTH = 7;
+const CHARS = 'lI1iL';
+let currentKey = generateKey(KEY_LENGTH);
+
+console.log("Initial key: " + currentKey);
+
+function generateKey(length) {
+  const bytes = crypto.randomBytes(length);
+  let key = '';
+  for (let i = 0; i < length; i++) {
+    key += CHARS[bytes[i] % CHARS.length];
+  }
+  return key;
+}
+
+function scheduleKeyRotation() {
+  const now = Date.now();
+  const msUntilNextMinute = 60000 - (now % 60000);
+  setTimeout(() => {
+    rotateKey();
+    setInterval(rotateKey, 60000);
+  }, msUntilNextMinute);
+}
+
+function rotateKey() {
+  currentKey = generateKey(KEY_LENGTH);
+  console.log("New key: " + currentKey);
+}
+
+app.get('/key', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  res.set('Access-Control-Allow-Origin', '*');
+  res.json({ key: currentKey, generatedAt: new Date().toISOString() });
+});
+
+app.get('/', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  res.set('Access-Control-Allow-Origin', '*');
+
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -11,7 +61,7 @@
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      background: radial-gradient(circle at center, #1a0033 0%, #000000 70%); /* Dark cyberpunk purple-black */
+      background: radial-gradient(circle at center, #1a0033 0%, #000000 70%);
       font-family: "VT323", monospace;
       color: #ccddff;
       position: relative;
@@ -101,7 +151,6 @@
       color: #aaccff;
     }
 
-    /* Audio Player */
     .audio-player {
       position: fixed;
       bottom: 30px;
@@ -133,23 +182,20 @@
       box-shadow: 0 0 20px #ff00ff;
     }
     .audio-player .volume {
-      width: 120px;
+      width: 130px;
     }
   </style>
 </head>
 <body>
   <canvas id="particleCanvas"></canvas>
 
-  <!-- Top Center Time -->
   <div class="time-top" id="currentTime">Time: --:--:--</div>
 
-  <!-- Top Right Key -->
   <div class="top-key" id="topKey">
     <span class="top-key-label">KEY:</span>
     <span id="keyValue">LOADING...</span>
   </div>
 
-  <!-- Center Content -->
   <div class="center-content">
     <img src="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/b4fdce5dc0c1c3bd7dda0fca077b0dfb158698de_full.jpg"
          class="main-icon" alt="Idiot's Playground">
@@ -160,7 +206,6 @@
     </div>
   </div>
 
-  <!-- Improved Audio Player -->
   <div class="audio-player">
     <button id="playBtn">▶ PLAY</button>
     <button id="pauseBtn">⏸ PAUSE</button>
@@ -169,27 +214,22 @@
   </div>
 
   <script>
-    // Live time
     function updateTime() {
       document.getElementById("currentTime").innerText = "Time: " + new Date().toLocaleTimeString('en-US', { hour12: false });
     }
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Key fetch
     async function fetchKey() {
       try {
         const r = await fetch('/key');
         const d = await r.json();
         document.getElementById('keyValue').textContent = d.key;
-      } catch(e) {
-        console.log("Key fetch failed");
-      }
+      } catch(e) {}
     }
     setInterval(fetchKey, 4000);
     fetchKey();
 
-    // Enhanced Particle System
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -202,7 +242,6 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // More particles + different speeds
     for (let i = 0; i < 120; i++) {
       points.push({
         x: Math.random() * canvas.width,
@@ -214,31 +253,22 @@
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(10, 0, 25, 0.45)'; // Slightly purple trail
+      ctx.fillStyle = 'rgba(10, 0, 25, 0.45)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Bounce with some randomness
-        if (p.x < 0 || p.x > canvas.width) {
-          p.vx *= -1.05;
-          p.x = Math.max(0, Math.min(canvas.width, p.x));
-        }
-        if (p.y < 0 || p.y > canvas.height) {
-          p.vy *= -1.05;
-          p.y = Math.max(0, Math.min(canvas.height, p.y));
-        }
+        if (p.x < 0 || p.x > canvas.width) { p.vx *= -1.05; p.x = Math.max(0, Math.min(canvas.width, p.x)); }
+        if (p.y < 0 || p.y > canvas.height) { p.vy *= -1.05; p.y = Math.max(0, Math.min(canvas.height, p.y)); }
 
-        // Draw faint dots
         ctx.fillStyle = '#ffffff';
         ctx.shadowBlur = 8;
         ctx.shadowColor = '#ff99ff';
         ctx.fillRect(p.x, p.y, p.size, p.size);
       }
 
-      // Connections
       for (let i = 0; i < points.length; i++) {
         for (let j = i + 1; j < points.length; j++) {
           const dx = points[i].x - points[j].x;
@@ -246,7 +276,7 @@
           const dist = Math.hypot(dx, dy);
           if (dist < 210) {
             const alpha = (1 - dist / 210) * 0.75 * intensity;
-            ctx.strokeStyle = `rgba(180, 220, 255, ${alpha})`;
+            ctx.strokeStyle = \`rgba(180, 220, 255, \${alpha})\`;
             ctx.lineWidth = 1.6 * intensity;
             ctx.shadowBlur = 25 * intensity;
             ctx.shadowColor = '#88aaff';
@@ -261,17 +291,15 @@
     }
     animate();
 
-    // Stronger pulse
     setInterval(() => {
       intensity = 3.2;
       setTimeout(() => intensity = 1.0, 220);
     }, 680);
 
-    // Audio Player (YouTube iframe kept but enhanced + fallback controls)
+    // Audio
     const audioIframe = document.createElement('iframe');
     audioIframe.style.display = 'none';
-    audioIframe.width = "0";
-    audioIframe.height = "0";
+    audioIframe.width = "0"; audioIframe.height = "0";
     audioIframe.src = "https://www.youtube.com/embed/PCG1W1VpIqo?autoplay=1&loop=1&playlist=PCG1W1VpIqo&controls=0&modestbranding=1&rel=0";
     audioIframe.allow = "autoplay; encrypted-media";
     document.body.appendChild(audioIframe);
@@ -279,48 +307,41 @@
     let isPlaying = true;
 
     document.getElementById('playBtn').addEventListener('click', () => {
-      try {
-        audioIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-        isPlaying = true;
-      } catch(e) {}
+      try { audioIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); isPlaying = true; } catch(e) {}
     });
 
     document.getElementById('pauseBtn').addEventListener('click', () => {
+      try { audioIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); isPlaying = false; } catch(e) {}
+    });
+
+    document.getElementById('volumeSlider').addEventListener('input', (e) => {
       try {
-        audioIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-        isPlaying = false;
+        const vol = Math.round(e.target.value * 100);
+        audioIframe.contentWindow.postMessage(\`{"event":"command","func":"setVolume","args":[\${vol}]}\`, '*');
       } catch(e) {}
     });
 
-    const volumeSlider = document.getElementById('volumeSlider');
-    volumeSlider.addEventListener('input', () => {
-      // YouTube iframe volume is hard to control precisely, but this helps with intent
-      try {
-        const vol = Math.round(volumeSlider.value * 100);
-        audioIframe.contentWindow.postMessage(`{"event":"command","func":"setVolume","args":[${vol}]}`, '*');
-      } catch(e) {}
-    });
-
-    // Autoplay attempt on load
     window.addEventListener('load', () => {
       setTimeout(() => {
-        try {
-          audioIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-        } catch(e) {}
+        try { audioIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); } catch(e) {}
       }, 1200);
     });
 
-    // Keyboard support (space = play/pause)
     document.addEventListener('keydown', e => {
       if (e.code === 'Space') {
         e.preventDefault();
-        if (isPlaying) {
-          document.getElementById('pauseBtn').click();
-        } else {
-          document.getElementById('playBtn').click();
-        }
+        if (isPlaying) document.getElementById('pauseBtn').click();
+        else document.getElementById('playBtn').click();
       }
     });
   </script>
 </body>
-</html>
+</html>`;
+
+  res.send(html);
+});
+
+app.listen(PORT, () => {
+  console.log("Idiot's Playground running on port " + PORT);
+  scheduleKeyRotation();
+});
