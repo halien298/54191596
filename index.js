@@ -3,8 +3,8 @@ const express = require('express');
 const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KEY_LENGTH = 15;
-const CHARS = 'QWERTZUIOPASDFGHJKLYXCVBNMqwertzuiopasdfghjklyxcvbnm123456789@€Đđ-';
+const KEY_LENGTH = 7;
+const CHARS = 'lI1iL';
 
 let currentKey = generateKey(KEY_LENGTH);
 console.log("Initial key: " + currentKey);
@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <title>Idiot's Playground</title>
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/9w0A2.jpg">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/halien298/54191596/refs/heads/main/b4fdce5dc0c1c3bd7dda0fca077b0dfb158698de_full.jpg">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
     
@@ -181,11 +181,11 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
-  <!-- Background Music (kept, no volume control) -->
+  <!-- Background Music -->
   <div style="display:none;">
     <iframe id="bgMusic"
             width="0" height="0"
-            src="https://www.youtube.com/embed/oK3gZnDJnx0?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1&rel=0&enablejsapi=1"
+            src="https://www.youtube.com/embed/PCG1W1VpIqo?autoplay=1&loop=1&playlist=oK3gZnDJnx0&controls=0&modestbranding=1&rel=0&enablejsapi=1"
             frameborder="0"
             allow="autoplay; encrypted-media">
     </iframe>
@@ -199,7 +199,7 @@ app.get('/', (req, res) => {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Particle canvas - PURE BLACK background + white lines with glow ONLY (split)
+    // Particle canvas
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let points = [];
@@ -222,7 +222,7 @@ app.get('/', (req, res) => {
     }
 
     function animate() {
-      // STRONG BLACK FADE - no white trails, background stays 100% black
+      
       ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -261,14 +261,14 @@ app.get('/', (req, res) => {
       setTimeout(() => intensity = 1.0, 160);
     }, 520);
 
-    // Auto refresh key
+    // Auto refresh
     setInterval(() => {
       fetch('/key').then(r => r.json()).then(d => {
         document.getElementById('topKey').innerHTML = '<span class="top-key-label">KEY:</span> ' + d.key;
       });
     }, 5000);
 
-    // Background music auto-start (volume control removed)
+    // Background music
     window.addEventListener('load', () => {
       setTimeout(() => {
         try {
