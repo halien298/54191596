@@ -61,11 +61,31 @@ app.get('/', (req, res) => {
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      background: radial-gradient(circle at center, #1a0033 0%, #000000 70%);
+      background: #000;
       font-family: "VT323", monospace;
       color: #ccddff;
       position: relative;
     }
+
+    /* Background Effects */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        linear-gradient(rgba(80, 0, 120, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(80, 0, 120, 0.08) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 2;
+      animation: scanline 6s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
     #particleCanvas {
       position: absolute;
       top: 0;
@@ -75,6 +95,7 @@ app.get('/', (req, res) => {
       z-index: 1;
       pointer-events: none;
     }
+
     .time-top {
       position: fixed;
       top: 28px;
@@ -85,6 +106,7 @@ app.get('/', (req, res) => {
       z-index: 100;
       text-shadow: 0 0 12px #ffffff, 0 0 24px #ff00ff;
     }
+
     .center-content {
       position: absolute;
       top: 50%;
@@ -93,6 +115,7 @@ app.get('/', (req, res) => {
       text-align: center;
       z-index: 10;
     }
+
     .main-icon {
       width: 290px;
       height: 290px;
@@ -108,6 +131,7 @@ app.get('/', (req, res) => {
     .main-icon:hover {
       transform: scale(1.08) rotate(2deg);
     }
+
     .links {
       display: flex;
       gap: 48px;
@@ -130,6 +154,7 @@ app.get('/', (req, res) => {
       color: #ffffff;
       background: rgba(40,20,60,0.95);
     }
+
     .top-key {
       position: fixed;
       top: 28px;
@@ -149,40 +174,6 @@ app.get('/', (req, res) => {
     .top-key-label {
       font-size: 1.15rem;
       color: #aaccff;
-    }
-
-    .audio-player {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(10,10,30,0.95);
-      border: 3px solid #ff00ff;
-      border-radius: 12px;
-      padding: 12px 28px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      z-index: 100;
-      box-shadow: 0 0 30px #ff00ff;
-    }
-    .audio-player button {
-      background: transparent;
-      border: 2px solid #ccddff;
-      color: #ccddff;
-      font-family: "VT323", monospace;
-      font-size: 1.4rem;
-      padding: 6px 18px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .audio-player button:hover {
-      background: #ff00ff;
-      color: #000;
-      box-shadow: 0 0 20px #ff00ff;
-    }
-    .audio-player .volume {
-      width: 130px;
     }
   </style>
 </head>
@@ -206,13 +197,6 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
-  <div class="audio-player">
-    <button id="playBtn">▶ PLAY</button>
-    <button id="pauseBtn">⏸ PAUSE</button>
-    <input type="range" id="volumeSlider" class="volume" min="0" max="1" step="0.01" value="0.7">
-    <span id="nowPlaying" style="font-size:1.3rem; color:#ff99ff;">Background Track</span>
-  </div>
-
   <script>
     function updateTime() {
       document.getElementById("currentTime").innerText = "Time: " + new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -230,8 +214,9 @@ app.get('/', (req, res) => {
     setInterval(fetchKey, 4000);
     fetchKey();
 
+    // Optimized Particle System
     const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     let points = [];
     let intensity = 1.0;
 
@@ -242,44 +227,46 @@ app.get('/', (req, res) => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    for (let i = 0; i < 120; i++) {
+    // Fewer particles + better performance
+    for (let i = 0; i < 65; i++) {
       points.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 1.8,
-        vy: (Math.random() - 0.5) * 1.8,
-        size: Math.random() * 3 + 1
+        vx: (Math.random() - 0.5) * 1.4,
+        vy: (Math.random() - 0.5) * 1.4,
+        size: Math.random() * 2.5 + 1
       });
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(10, 0, 25, 0.45)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (let p of points) {
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > canvas.width) { p.vx *= -1.05; p.x = Math.max(0, Math.min(canvas.width, p.x)); }
-        if (p.y < 0 || p.y > canvas.height) { p.vy *= -1.05; p.y = Math.max(0, Math.min(canvas.height, p.y)); }
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
         ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = '#ff99ff';
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#ff88ff';
         ctx.fillRect(p.x, p.y, p.size, p.size);
       }
 
-      for (let i = 0; i < points.length; i++) {
-        for (let j = i + 1; j < points.length; j++) {
+      // Optimized connections (skip some pairs)
+      for (let i = 0; i < points.length; i += 1) {
+        for (let j = i + 1; j < points.length; j += 1) {
           const dx = points[i].x - points[j].x;
           const dy = points[i].y - points[j].y;
           const dist = Math.hypot(dx, dy);
-          if (dist < 210) {
-            const alpha = (1 - dist / 210) * 0.75 * intensity;
+          if (dist < 160) {
+            const alpha = (1 - dist / 160) * 0.65 * intensity;
             ctx.strokeStyle = \`rgba(180, 220, 255, \${alpha})\`;
-            ctx.lineWidth = 1.6 * intensity;
-            ctx.shadowBlur = 25 * intensity;
-            ctx.shadowColor = '#88aaff';
+            ctx.lineWidth = 1.2;
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#99bbff';
             ctx.beginPath();
             ctx.moveTo(points[i].x, points[i].y);
             ctx.lineTo(points[j].x, points[j].y);
@@ -291,49 +278,11 @@ app.get('/', (req, res) => {
     }
     animate();
 
+    // Pulse effect
     setInterval(() => {
-      intensity = 3.2;
-      setTimeout(() => intensity = 1.0, 220);
-    }, 680);
-
-    // Audio
-    const audioIframe = document.createElement('iframe');
-    audioIframe.style.display = 'none';
-    audioIframe.width = "0"; audioIframe.height = "0";
-    audioIframe.src = "https://www.youtube.com/embed/PCG1W1VpIqo?autoplay=1&loop=1&playlist=PCG1W1VpIqo&controls=0&modestbranding=1&rel=0";
-    audioIframe.allow = "autoplay; encrypted-media";
-    document.body.appendChild(audioIframe);
-
-    let isPlaying = true;
-
-    document.getElementById('playBtn').addEventListener('click', () => {
-      try { audioIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); isPlaying = true; } catch(e) {}
-    });
-
-    document.getElementById('pauseBtn').addEventListener('click', () => {
-      try { audioIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); isPlaying = false; } catch(e) {}
-    });
-
-    document.getElementById('volumeSlider').addEventListener('input', (e) => {
-      try {
-        const vol = Math.round(e.target.value * 100);
-        audioIframe.contentWindow.postMessage(\`{"event":"command","func":"setVolume","args":[\${vol}]}\`, '*');
-      } catch(e) {}
-    });
-
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        try { audioIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); } catch(e) {}
-      }, 1200);
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        if (isPlaying) document.getElementById('pauseBtn').click();
-        else document.getElementById('playBtn').click();
-      }
-    });
+      intensity = 2.8;
+      setTimeout(() => intensity = 1.0, 180);
+    }, 750);
   </script>
 </body>
 </html>`;
